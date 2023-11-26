@@ -5,6 +5,7 @@ import Home from "../pages";
 import About from "../pages/about";
 import styled from 'styled-components';
 import Dashboard from "../pages/dashboard";
+import Signup from '../pages/signup'
 
 const Main = () => {
     const location = useLocation();
@@ -18,6 +19,7 @@ const Main = () => {
                     <Route exact path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/signup" element={<Signup />} />
                 </Routes>
             </Content>
         </MainContent>

@@ -35,7 +35,11 @@ const Navbar = () => {
             </NavSection>
             
             <NavSection>
-                Login
+            <NavLink to="/signup">
+                        <Link>
+                            Sign Up
+                        </Link>
+                    </NavLink>
             </NavSection>
             
 		</Nav>
