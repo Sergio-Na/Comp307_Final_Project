@@ -29,7 +29,6 @@ const Sidebar = () => {
 
 
 const Container = styled.div`
-    background-color: #b9b9b9;
     width: 20%;
     max-width: 200px;
     display: flex;

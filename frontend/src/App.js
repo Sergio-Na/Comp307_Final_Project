@@ -45,6 +45,13 @@ const MainContent = styled.div`
 const Content = styled.div`
   flex: 1;  
   padding: 10px 30px;
+  background-color: white;
+  border-radius: 10px;
+  margin: 5px;
+
+  &>*{
+    color: black;
+  }
 `
 
 

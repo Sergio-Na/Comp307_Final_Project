@@ -1,7 +1,17 @@
-body {
+*{
   margin: 0;
   padding:0;
   box-sizing: border-box;
+}
+
+:root{
+  --main-bg-color: #84468D;
+  --main-accent-color: #DAC4DD;
+}
+
+body {
+  color: white;
+  background-color: var(--main-bg-color);
 }
 
 a{

@@ -40,7 +40,6 @@ const Nav = styled.nav`
     display: flex;
     justify-content: space-between;
     padding: 15px 30px;
-    background-color: #b9b9b9;
 
 `
 
@@ -54,19 +53,18 @@ const NavSection = styled.div`
 `
 const Links = styled.div`
     display: flex;
-    background-color: #d7d7d7;
+    background-color: var(--main-accent-color);
     border-radius: 10px;
 `
 
 const Link = styled.button`
     font-size: 14px;
     padding: 15px 30px;
-    border-radius: 10px;
 
 
 
     &:hover{
-        background-color: grey;
+        background-color: #81438A;
         color: white;
         cursor: pointer;
     }
