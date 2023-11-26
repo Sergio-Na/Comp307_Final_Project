@@ -1,14 +1,10 @@
 
 import React from "react";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
+import Main from "./components/Main";
 import {
 	BrowserRouter as Router,
-	Routes,
-	Route,
 } from "react-router-dom";
-import Home from "./pages";
-import About from "./pages/about";
 import styled from 'styled-components'
 
 
@@ -17,41 +13,17 @@ function App() {
       <Router>
           <AppContainer>
               <Navbar />
-              <MainContent>
-                  <Sidebar />
-                  <Content>
-                      <Routes>
-                          <Route exact path="/" element={<Home />} />
-                          <Route path="/about" element={<About />} />
-                      </Routes>
-                  </Content>
-              </MainContent>
+              <Main /> 
           </AppContainer>
       </Router>
   );
 }
 
+
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-`
-
-const MainContent = styled.div`
-  display: flex;
-  flex: 1; 
-`
-
-const Content = styled.div`
-  flex: 1;  
-  padding: 10px 30px;
-  background-color: white;
-  border-radius: 10px;
-  margin: 5px;
-
-  &>*{
-    color: black;
-  }
 `
 
 

@@ -25,6 +25,12 @@ const Navbar = () => {
                             About
                         </Link>
                     </NavLink>
+
+                    <NavLink to="/dashboard">
+                        <Link>
+                            Dashboard *temporary*
+                        </Link>
+                    </NavLink>
                 </Links>
             </NavSection>
             
