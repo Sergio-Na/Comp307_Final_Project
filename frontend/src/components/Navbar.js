@@ -74,7 +74,7 @@ const Link = styled.button`
 
 
     &:hover{
-        background-color: #81438A;
+        background-color: var(--main-bg-color);
         color: white;
         cursor: pointer;
     }
