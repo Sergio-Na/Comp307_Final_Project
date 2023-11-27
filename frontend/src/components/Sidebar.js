@@ -5,6 +5,8 @@ import { FaRegMessage } from "react-icons/fa6";
 import { FaQuestion } from "react-icons/fa";
 import { GiWalrusHead } from "react-icons/gi"
 import { NavLink, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { GoSidebarCollapse } from "react-icons/go";
 
 
 
@@ -14,33 +16,38 @@ const Sidebar = () => {
     const location = useLocation();
     const pathName = location.pathname
 
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
     const isActive = (itemName) => pathName.includes(itemName);
 
   return (
-    <Container>
+    <Container $iscollapsed={isCollapsed}>
+        <ToggleCollapseButton $iscollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)}>
+            <GoSidebarCollapse  size={25}/>
+        </ToggleCollapseButton>
         <Menu>
             <NavLink to="/dashboard/channels">
-                <MenuItem active={isActive('channels')}>
+                <MenuItem $active={isActive('channels')}>
                     <Icon><GrChannel/></Icon>
-                    <ItemName>Channels</ItemName>
+                    <ItemName $iscollapsed={isCollapsed}>Channels</ItemName>
                 </MenuItem>
             </NavLink>
             <NavLink to="/dashboard/dms">
-                <MenuItem active={isActive('dms')}>
+                <MenuItem $active={isActive('dms')}>
                     <Icon><FaRegMessage /></Icon>
-                    <ItemName>Direct messages</ItemName>
+                    <ItemName $iscollapsed={isCollapsed}>Direct messages</ItemName>
                 </MenuItem>
             </NavLink>
             <NavLink to="/">
-                <MenuItem active={isActive('///')}>
+                <MenuItem $active={isActive('///')}>
                     <Icon><FaQuestion /></Icon>
-                    <ItemName>SOmething else</ItemName>
+                    <ItemName $iscollapsed={isCollapsed}>SOmething else</ItemName>
                 </MenuItem>
             </NavLink>
             <NavLink to="/">
-                <MenuItem active={isActive('///')}>
+                <MenuItem $active={isActive('///')}>
                     <Icon><FaQuestion /></Icon>
-                    <ItemName>Something else</ItemName>
+                    <ItemName $iscollapsed={isCollapsed}>Something else</ItemName>
                 </MenuItem>
             </NavLink>
         </Menu>
@@ -53,15 +60,38 @@ const Sidebar = () => {
   )
 }
 
+const ToggleCollapseButton = styled.button`
+    position: absolute;
+    top: -15px;
+    right: 15px;
+    padding: 5px;
+
+    transition: all 1s ease;
+
+    transform: rotate(${props => props.$iscollapsed ? '0deg' : '180deg'});
+
+    &:hover{
+        cursor: pointer;
+    }
+
+`;
+
+
 
 const Container = styled.div`
-    width: 20%;
-    max-width: 200px;
+    width: ${props => props.$iscollapsed ? '15%' : '20%'};
+    max-width: ${props => props.$iscollapsed ? '60px' : '200px'};
+    transition: width 0.3s ease;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin-top: 20px;
     padding: 20px;
-`
+    padding: ${props => props.$iscollapsed ? '20px 10px' : '20px'};
+
+    transition: all 1s ease;
+`;
 
 const Menu = styled.div`
     display: flex;
@@ -77,19 +107,24 @@ const MenuItem = styled.div`
     display: flex;
     align-items: center;
     gap: 15px;
-    color: ${props => props.active ? 'black' : 'white'};
-    background-color: ${props => props.active ? 'white' : 'transparent'};
+    color: ${props => props.active ? 'white' : 'black'};
+    background-color: ${props => props.$active ? 'white' : 'transparent'};
+    &:hover {
+        background-color: ${props => props.$iscollapsed ? 'transparent' : 'var(--main-accent-color)'};
+    }
 
     transition: all 1s ease;
 
     &:hover {
         color: black;
-        background-color: var(--main-accent-color);
+        background-color: ${props => props.iscollapsed ? 'transparent' : 'var(--main-accent-color)'};
     }
 `;
 
 const ItemName = styled.div`
-    display: flex;
+    transition: all 1s ease;
+    display: ${props => props.$iscollapsed ? 'none' : 'flex'};
+
     padding-top: 3px;
     align-items: center;
 

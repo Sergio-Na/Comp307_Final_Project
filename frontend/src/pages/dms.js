@@ -31,7 +31,7 @@ const Dms = () => {
 
 const Container = styled.div`
     padding: 10px;
-    width: 50%;
+    max-width: 650px;
 
 `
 
