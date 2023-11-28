@@ -23,7 +23,9 @@ const Navbar = () => {
 	return (
 		<Nav>
             <NavSection>
-                Logo
+                <NavLink to="/">
+                    Logo
+                </NavLink>
             </NavSection>
             <NavSection>
                 
@@ -42,11 +44,6 @@ const Navbar = () => {
                             </Button>
                         </NavLink>
 
-                        <NavLink to="/dashboard">
-                            <Button>
-                                Dashboard *temporary*
-                            </Button>
-                        </NavLink>
                     </Links>
                 }
                     
@@ -71,6 +68,11 @@ const Navbar = () => {
                     <Button onClick={() => handleSignOut()}>
                         Sign out
                     </Button>
+                    <NavLink to="/dashboard">
+                            <Button>
+                                Dashboard
+                            </Button>
+                    </NavLink>
                 </NavSection>
 
         }
