@@ -110,6 +110,13 @@ const SubChannelItem = styled.div`
     border-radius: 10px;
     background-color: #ffffff47;
     margin-right: 20px;
+    transition: all 1s ease;
+
+    &:hover{
+        cursor: pointer;
+        transform: scale(1.05);
+        font-weight: bold;
+    }
 
 `
 const AddChannel = styled.div`
@@ -136,9 +143,15 @@ const ChannelsContainer = styled.div`
 
 const ChannelIcon = styled.button`
     background-color: var(--main-accent-color);
-    padding: 30px 40px;
+    padding: 20px 30px;
     width: min-content;
     border-radius: 20px;
+    transition: all 1s ease;
+
+    &:hover{
+        cursor: pointer;
+        transform: scale(1.1)
+    }
 
 `
 
