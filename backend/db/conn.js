@@ -1,23 +1,16 @@
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 const Db = process.env.ATLAS_URI;
-const client = new MongoClient(Db);
-const Channel = require("../models/channelSchema.js");
 
-var _db;
-
-module.exports = {
-  connectToServer: function (callback) {
-    client.connect(function (err, db) {
-      // Verify we got a good "db" object
-      if (db) {
-        _db = db.db("employees");
-        console.log("Successfully connected to MongoDB.");
-      }
-      return callback(err);
+const connectToServer = async () => {
+  try {
+    await mongoose.connect(Db, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
-  },
-
-  getDb: function () {
-    return _db;
-  },
+    console.log("Successfully connected to MongoDB using Mongoose.");
+  } catch (err) {
+    console.error("Could not connect to MongoDB", err);
+  }
 };
+
+module.exports = { connectToServer };

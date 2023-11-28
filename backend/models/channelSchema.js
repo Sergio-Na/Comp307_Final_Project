@@ -1,8 +1,18 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const channelSchema = new mongoose.Schema({
-//   walletAddress: { type: String, required: true },
+// Message sub-schema
+const messageSchema = new mongoose.Schema({
+  text: String,
+  timestamp: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
-const Channel = mongoose.model('Channels', userSchema);
+// Channel schema
+const channelSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Reference to User documents
+  messages: [messageSchema], // Embedding messages directly in the channel
+});
+
+const Channel = mongoose.model("Channel", channelSchema);
 module.exports = Channel;
