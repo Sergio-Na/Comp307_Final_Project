@@ -22,43 +22,125 @@ const Sidebar = () => {
 
   return (
     <Container $iscollapsed={isCollapsed}>
-        <ToggleCollapseButton $iscollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)}>
+        {/* <ToggleCollapseButton $iscollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)}>
             <GoSidebarCollapse  size={25}/>
         </ToggleCollapseButton>
-        <Menu>
-            <NavLink to="/dashboard/channels">
-                <MenuItem $active={isActive('channels')}>
-                    <Icon><GrChannel/></Icon>
-                    <ItemName $iscollapsed={isCollapsed}>Channels</ItemName>
-                </MenuItem>
+        <>
+            <ChannelSubFields>
+                <NavLink to="/dashboard/channels">
+                    <MenuItem $active={isActive('channels')}>
+                        <Icon><GrChannel/></Icon>
+                        <ItemName $iscollapsed={isCollapsed}>Channels</ItemName>
+                    </MenuItem>
+                </NavLink>
+                <NavLink to="/dashboard/dms">
+                    <MenuItem $active={isActive('dms')}>
+                        <Icon><FaRegMessage /></Icon>
+                        <ItemName $iscollapsed={isCollapsed}>Direct messages</ItemName>
+                    </MenuItem>
+                </NavLink>
+                <NavLink to="/">
+                    <MenuItem $active={isActive('///')}>
+                        <Icon><FaQuestion /></Icon>
+                        <ItemName $iscollapsed={isCollapsed}>SOmething else</ItemName>
+                    </MenuItem>
+                </NavLink>
+                <NavLink to="/">
+                    <MenuItem $active={isActive('///')}>
+                        <Icon><FaQuestion /></Icon>
+                        <ItemName $iscollapsed={isCollapsed}>Something else</ItemName>
+                    </MenuItem>
+                </NavLink>
+            </ChannelSubFields>
+            <NavLink to='/dashboard/profile'>
+                <ProfileTab>
+                    <GiWalrusHead size={75}/>
+                    Profile
+                </ProfileTab>
             </NavLink>
-            <NavLink to="/dashboard/dms">
-                <MenuItem $active={isActive('dms')}>
-                    <Icon><FaRegMessage /></Icon>
-                    <ItemName $iscollapsed={isCollapsed}>Direct messages</ItemName>
-                </MenuItem>
-            </NavLink>
-            <NavLink to="/">
-                <MenuItem $active={isActive('///')}>
-                    <Icon><FaQuestion /></Icon>
-                    <ItemName $iscollapsed={isCollapsed}>SOmething else</ItemName>
-                </MenuItem>
-            </NavLink>
-            <NavLink to="/">
-                <MenuItem $active={isActive('///')}>
-                    <Icon><FaQuestion /></Icon>
-                    <ItemName $iscollapsed={isCollapsed}>Something else</ItemName>
-                </MenuItem>
-            </NavLink>
-        </Menu>
-        <ProfileTab>
-            <GiWalrusHead size={75}/>
-            Profile
-        </ProfileTab>
+        </> */}
+        <ChannelsContainer>
+            <Channels>
+                <ChannelIcon>1</ChannelIcon>
+                <ChannelIcon>2</ChannelIcon>
+                <ChannelIcon>3</ChannelIcon>
+                <ChannelIcon>4</ChannelIcon>
+            </Channels>
+            <AddChannel>
+                <ChannelIcon>
+                    +
+                </ChannelIcon>
+            </AddChannel>
+        </ChannelsContainer>
+        <SubChannels>
+            <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
+            <SubChannelItem><div>#</div><div>Homework</div></SubChannelItem>
+            <SubChannelItem><div>#</div><div>Midterm</div></SubChannelItem>
+            <SubChannelItem><div>#</div><div>Final</div></SubChannelItem>
+            <SubChannelItem><div>#</div><div>Q&A</div></SubChannelItem>
+        </SubChannels>
         
     </Container>
   )
 }
+
+const Container = styled.div`
+    display: flex;
+    gap: 20px;
+`
+
+const SubChannels = styled.div`
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    background-color: var(--main-accent-color);
+    margin: 0px 0px 5px 0px;
+    border-radius: 10px 0px 0px 10px;
+    padding: 20px 0px;
+    padding-left: 10px;
+
+`
+
+const SubChannelItem = styled.div`
+    display: flex;
+    gap: 10px;
+    min-width: 200px;
+    color: black;
+    padding: 5px 15px;
+    border-radius: 10px;
+    background-color: #ffffff47;
+    margin-right: 20px;
+
+`
+const AddChannel = styled.div`
+    
+
+`
+
+const Channels = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+`
+
+const ChannelsContainer = styled.div`
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 20px;
+    padding-bottom: 20px;
+
+`
+
+const ChannelIcon = styled.button`
+    background-color: var(--main-accent-color);
+    padding: 30px 40px;
+    width: min-content;
+    border-radius: 20px;
+
+`
 
 const ToggleCollapseButton = styled.button`
     position: absolute;
@@ -78,20 +160,20 @@ const ToggleCollapseButton = styled.button`
 
 
 
-const Container = styled.div`
-    width: ${props => props.$iscollapsed ? '15%' : '20%'};
-    max-width: ${props => props.$iscollapsed ? '60px' : '200px'};
-    transition: width 0.3s ease;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-top: 20px;
-    padding: 20px;
-    padding: ${props => props.$iscollapsed ? '20px 10px' : '20px'};
+// const Container = styled.div`
+//     width: ${props => props.$iscollapsed ? '15%' : '20%'};
+//     max-width: ${props => props.$iscollapsed ? '60px' : '200px'};
+//     transition: width 0.3s ease;
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: space-between;
+//     margin-top: 20px;
+//     padding: 20px;
+//     padding: ${props => props.$iscollapsed ? '20px 10px' : '20px'};
 
-    transition: all 1s ease;
-`;
+//     transition: all 1s ease;
+// `;
 
 const Menu = styled.div`
     display: flex;

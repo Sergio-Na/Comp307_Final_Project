@@ -9,15 +9,17 @@ import SignUp from '../pages/signup.js'
 import SignIn from "../pages/signin.js";
 import Channels from '../pages/channels.js'
 import ProtectedRoute from "./ProtectedRoute.js";
+import Profile from "../pages/profile.js";
 
 const Main = () => {
     const location = useLocation();
     const isDashboard = location.pathname.includes('/dashboard');
+    console.log(isDashboard)
 
     return (
         <MainContent>
             {isDashboard && <Sidebar />}
-            <Content>
+            <Content $isDashboard={isDashboard}>
                 <Routes>
                     <Route exact path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
@@ -25,6 +27,7 @@ const Main = () => {
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/dashboard/channels" element={<ProtectedRoute><Channels /></ProtectedRoute>} />
+                    <Route path="dashboard/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 </Routes>
             </Content>
         </MainContent>
@@ -41,7 +44,7 @@ const Content = styled.div`
     padding: 10px 30px;
     background-color: white;
     border-radius: 10px;
-    margin: 5px;
+    margin: ${props => props.$isDashboard ? '0px 5px 5px -10px': '0px 5px 5px 5px'};
     & > * {
         color: black;
     }
