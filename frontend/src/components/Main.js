@@ -5,9 +5,10 @@ import Home from "../pages";
 import About from "../pages/about";
 import styled from 'styled-components';
 import Dashboard from "../pages/dashboard";
-import Signup from '../pages/signup'
+import SignUp from '../pages/signup.js'
+import SignIn from "../pages/signin.js";
 import Channels from '../pages/channels.js'
-import Dms from '../pages/dms'
+import ProtectedRoute from "./ProtectedRoute.js";
 
 const Main = () => {
     const location = useLocation();
@@ -20,10 +21,10 @@ const Main = () => {
                 <Routes>
                     <Route exact path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/dashboard/channels" element={<Channels />} />
-                    <Route path="/dashboard/dms" element={<Dms />} />
+                    <Route path="/dashboard" element={ <ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/dashboard/channels" element={<ProtectedRoute><Channels /></ProtectedRoute>} />
                 </Routes>
             </Content>
         </MainContent>

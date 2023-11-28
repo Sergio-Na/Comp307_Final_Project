@@ -4,17 +4,13 @@ import axiosInstance from '../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react'
 
-const SignUp = () => {
-    
+const SignIn = () => {
+
     const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
         email: '',
         password: '',
-        bio: '',
-        profilePicture: ''
     });
 
     // Handle input change
@@ -23,30 +19,23 @@ const SignUp = () => {
     }
 
     // Handle form submission
-    const handleSignUp = async (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
 
         console.log(formData)
         try {
-            const response = await axiosInstance.post('/signup', formData);
+            const response = await axiosInstance.post('/login', formData);
             console.log(response.data); // Handle success
-            navigate('/signin')
+            localStorage.setItem('token', response.data.token);
+            navigate('/dashboard')
         } catch (error) {
             console.error(error); // Handle errors
         }
     }
   return (
     <Container>
-        <Form onSubmit={(e) => handleSignUp(e)}>
-            <h1>Sign Up</h1>
-            <Label htmlFor="firstName">
-                First Name: 
-                <Input type="text"  onChange={handleChange} name="firstName" id="firstName" />
-            </Label>
-            <Label htmlFor="lastName">
-                Last Name:
-                <Input type="text"  onChange={handleChange} name="lastName" id="lastName" />
-            </Label>
+        <Form onSubmit={(e) => handleSignIn(e)}>
+            <h1>Sign In</h1>
             <Label htmlFor="email">
                 Email:
                 <Input type="email" name="email" id="email"  onChange={handleChange} autoComplete="true" />
@@ -55,16 +44,8 @@ const SignUp = () => {
                 Password: 
                 <Input type="password"  onChange={handleChange} name="password" id="password" />
             </Label>
-            <Label htmlFor="bio">
-                Bio:
-                <Input type="text"  onChange={handleChange} name="bio" id="bio" />
-            </Label>
-            <Label htmlFor="profilePicture">
-                Profile Picture:
-                <Input type="url" id="profilePicture" name="profilePicture" placeholder='url' onChange={handleChange} />
-            </Label>
             <Button type="submit">
-                Register
+                Sign In
             </Button>
         </Form>
     </Container>
@@ -117,4 +98,4 @@ const Input = styled.input`
 
 `
 
-export default SignUp
+export default SignIn

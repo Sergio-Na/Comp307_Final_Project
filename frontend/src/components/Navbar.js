@@ -1,8 +1,7 @@
-// Filename - "./components/Navbar.js
-
 import React from "react";
 import { NavLink } from "react-router-dom";
 import styled from 'styled-components'
+
 
 
 const Navbar = () => {
@@ -14,38 +13,59 @@ const Navbar = () => {
             <NavSection>
                 <Links>
                     <NavLink to="/">
-                        <Link>
+                        <Button>
                             Home
-                        </Link>
+                        </Button>
                     </NavLink>
                 
                 
                     <NavLink to="/about">
-                        <Link>
+                        <Button>
                             About
-                        </Link>
+                        </Button>
                     </NavLink>
 
                     <NavLink to="/dashboard">
-                        <Link>
+                        <Button>
                             Dashboard *temporary*
-                        </Link>
+                        </Button>
                     </NavLink>
                 </Links>
             </NavSection>
             
             <NavSection>
-            <NavLink to="/signup">
-                        <Link>
-                            Sign Up
-                        </Link>
-                    </NavLink>
+                <NavLink to="/signup">
+                    <Button>
+                        Sign Up
+                    </Button>
+                </NavLink>
+                <NavLink to="/signin">
+                    <Button>
+                        Sign In
+                    </Button>
+                </NavLink>
             </NavSection>
+            
             
 		</Nav>
 	);
 };
 
+
+const Button = styled.button`
+    background-color: var(--main-accent-color);
+    padding: 15px 30px;
+    border-radius: 10px;
+
+    margin:5px;
+    
+    &:hover{
+        background-color: var(--main-bg-color);
+        color: white;
+        cursor: pointer;
+    }
+
+`
 const Nav = styled.nav`
     display: flex;
     justify-content: space-between;
@@ -65,20 +85,6 @@ const Links = styled.div`
     display: flex;
     background-color: var(--main-accent-color);
     border-radius: 10px;
-`
-
-const Link = styled.button`
-    font-size: 14px;
-    padding: 15px 30px;
-
-
-
-    &:hover{
-        background-color: var(--main-bg-color);
-        color: white;
-        cursor: pointer;
-    }
-
 `
 
 export default Navbar;
