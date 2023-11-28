@@ -1,50 +1,80 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import styled from 'styled-components'
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
 const Navbar = () => {
+
+    const navigate = useNavigate()
+
+    const location = useLocation();
+    const pathName = location.pathname
+    const isDashboard= pathName.includes('/dashboard')
+
+    const loggedIn = window.localStorage.getItem('token')
+
+    const handleSignOut = () => {
+        window.localStorage.removeItem('token')
+        navigate('/signin')
+    }
 	return (
 		<Nav>
             <NavSection>
                 Logo
             </NavSection>
             <NavSection>
-                <Links>
-                    <NavLink to="/">
-                        <Button>
-                            Home
-                        </Button>
-                    </NavLink>
                 
-                
-                    <NavLink to="/about">
-                        <Button>
-                            About
-                        </Button>
-                    </NavLink>
+                {isDashboard &&
+                    <Links>
+                        <NavLink to="/">
+                            <Button>
+                                Home
+                            </Button>
+                        </NavLink>
+                    
+                    
+                        <NavLink to="/about">
+                            <Button>
+                                About
+                            </Button>
+                        </NavLink>
 
-                    <NavLink to="/dashboard">
-                        <Button>
-                            Dashboard *temporary*
-                        </Button>
-                    </NavLink>
-                </Links>
+                        <NavLink to="/dashboard">
+                            <Button>
+                                Dashboard *temporary*
+                            </Button>
+                        </NavLink>
+                    </Links>
+                }
+                    
+                
             </NavSection>
             
-            <NavSection>
-                <NavLink to="/signup">
-                    <Button>
-                        Sign Up
+            {!loggedIn ? 
+                <NavSection>
+                    <NavLink to="/signup">
+                        <Button>
+                            Sign Up
+                        </Button>
+                    </NavLink>
+                    <NavLink to="/signin">
+                        <Button>
+                            Sign In
+                        </Button>
+                    </NavLink>
+                </NavSection>
+                :
+                <NavSection>
+                    <Button onClick={() => handleSignOut()}>
+                        Sign out
                     </Button>
-                </NavLink>
-                <NavLink to="/signin">
-                    <Button>
-                        Sign In
-                    </Button>
-                </NavLink>
-            </NavSection>
+                </NavSection>
+
+        }
+            
             
             
 		</Nav>
@@ -54,7 +84,7 @@ const Navbar = () => {
 
 const Button = styled.button`
     background-color: var(--main-accent-color);
-    padding: 15px 30px;
+    padding: 10px 30px;
     border-radius: 10px;
 
     margin:5px;
@@ -69,7 +99,7 @@ const Button = styled.button`
 const Nav = styled.nav`
     display: flex;
     justify-content: space-between;
-    padding: 15px 30px;
+    padding: 10px 30px;
 
 `
 

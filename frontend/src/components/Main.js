@@ -13,6 +13,7 @@ import Profile from "../pages/profile.js";
 
 const Main = () => {
     const location = useLocation();
+    console.log(location)
     const isDashboard = location.pathname.includes('/dashboard');
     console.log(isDashboard)
 
@@ -43,8 +44,8 @@ const Content = styled.div`
     flex: 1;
     padding: 10px 30px;
     background-color: white;
-    border-radius: 10px;
-    margin: ${props => props.$isDashboard ? '0px 5px 5px -10px': '0px 5px 5px 5px'};
+    border-radius: ${props => props.$isDashboard ? '10px': '0px'};
+    margin: ${props => props.$isDashboard ? '0px 5px 5px -10px': '0px'};
     & > * {
         color: black;
     }
