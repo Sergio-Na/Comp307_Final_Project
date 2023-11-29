@@ -26,11 +26,17 @@ const Sidebar = () => {
                 <NavLink to="/dashboard/channel3"><ChannelIcon>3</ChannelIcon></NavLink>
                 <NavLink to="/dashboard/channel4"><ChannelIcon>4</ChannelIcon></NavLink>
             </Channels>
-            <AddChannel>
+            <BottomSidebar>
                 <ChannelIcon>
                     +
                 </ChannelIcon>
-            </AddChannel>
+                <NavLink to='/profile'>
+                    <ChannelIcon> 
+                        {/* Profile */}
+                        P
+                    </ChannelIcon>
+                </NavLink>
+            </BottomSidebar>
         </ChannelsContainer>
         <SubChannels>
             <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
@@ -79,8 +85,10 @@ const SubChannelItem = styled.div`
     }
 
 `
-const AddChannel = styled.div`
-    
+const BottomSidebar = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
 `
 

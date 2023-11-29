@@ -26,7 +26,7 @@ const Home = () => {
                 </TextSection>
             </Hero>
             <ImageSection>
-                <Img src="landingPage.png" alt="" />
+                <Img src="landingPage.png" alt='' />
             </ImageSection>
         </Container>
     );
