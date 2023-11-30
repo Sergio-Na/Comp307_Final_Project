@@ -13,7 +13,7 @@ const Navbar = () => {
 
     const location = useLocation();
     const pathName = location.pathname
-    const isDashboard= pathName.includes('/dashboard')
+    const isDashboardOrProfile = pathName.includes('/dashboard') || pathName.includes('/profile')
 
     const loggedIn = window.localStorage.getItem('token')
 
@@ -34,7 +34,7 @@ const Navbar = () => {
             </NavSection>
             <NavSection>
                 
-                {isDashboard &&
+                {isDashboardOrProfile &&
                     <Links>
                         <NavLink to="/">
                             <Button>

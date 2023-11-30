@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import axiosInstance from '../axiosConfig'
 import styled from 'styled-components'
 import { useState } from 'react'
+import decodeToken from '../decodeToken'
 
 const Profile = () => {
 
@@ -13,17 +14,7 @@ const Profile = () => {
 
 
   useEffect(() => {
-      const token = window.localStorage.getItem('token')
-      const decodeToken = (token) => {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map((c) => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-    
-      return JSON.parse(jsonPayload);
-    };
-    
+    const token = window.localStorage.getItem('token')
     const decodedToken = decodeToken(token);
     const userId = decodedToken.userId;
 
@@ -128,9 +119,9 @@ const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 40px;
   max-width: 800px;
-  margin: auto;
+  margin: 30px;
   background-color: #f8f8f8;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

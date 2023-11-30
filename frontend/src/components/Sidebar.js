@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { NavLink, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axiosInstance from '../axiosConfig';
+import decodeToken from '../decodeToken';
 
 
 
@@ -9,7 +11,35 @@ import { useState } from 'react';
 
 const Sidebar = () => {
     const location = useLocation();
-    const pathName = location.pathname
+    const pathName = location.pathname;
+
+    const token = window.localStorage.getItem('token')
+    const userId = decodeToken(token).userId
+
+    const [channels, setChannels] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const config = {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          };
+          axiosInstance.get(`/users/${userId}`, config)
+            .then(response => {
+                if (Array.isArray(response.data.channels)) {
+                setChannels(response.data.channels);
+                } else {
+                setChannels([]); // or handle the error accordingly
+                }
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching user profile', error);
+                setLoading(false);
+            });
+    }, [])
+
 
     const isProfile = location.pathname === '/profile'
 
@@ -22,12 +52,28 @@ const Sidebar = () => {
 
         {/* Dummy data for now */}
         <ChannelsContainer>
-            <Channels $isprofile={isProfile}>
-                <NavLink to="/dashboard/channel1"><ChannelIcon>1</ChannelIcon></NavLink>
-                <NavLink to="/dashboard/channel2"><ChannelIcon>2</ChannelIcon></NavLink>
-                <NavLink to="/dashboard/channel3"><ChannelIcon>3</ChannelIcon></NavLink>
-                <NavLink to="/dashboard/channel4"><ChannelIcon>4</ChannelIcon></NavLink>
-            </Channels>
+            {
+                loading 
+                ?
+
+                <>
+                    Loading
+                </>
+                :
+
+                <Channels $isprofile={isProfile}>
+                    {channels.map((channel) => (
+                        <NavLink key={channel.id} to={`/dashboard/${channel.id}`}>
+                            <ChannelIcon>{channel.name}</ChannelIcon>
+                        </NavLink>
+                        ))}
+                    {/* <NavLink to="/dashboard/channel1"><ChannelIcon>1</ChannelIcon></NavLink>
+                    <NavLink to="/dashboard/channel2"><ChannelIcon>2</ChannelIcon></NavLink>
+                    <NavLink to="/dashboard/channel3"><ChannelIcon>3</ChannelIcon></NavLink>
+                    <NavLink to="/dashboard/channel4"><ChannelIcon>4</ChannelIcon></NavLink> */}
+                </Channels>
+            }
+            
             <BottomSidebar>
                 <ChannelIcon>
                     +
@@ -59,7 +105,7 @@ const Sidebar = () => {
 
 const Container = styled.div`
     display: flex;
-    gap: 20px;
+    /* gap: 20px; */
 `
 
 const SubChannels = styled.div`
@@ -96,6 +142,7 @@ const BottomSidebar = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-right: 30px;
 
 `
 
