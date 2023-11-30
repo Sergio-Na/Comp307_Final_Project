@@ -66,6 +66,36 @@ router.post("/login", async (req, res) => {
       .json({ error: "An error occurred during login. Please try again." });
   }
 });
+//get user by id
+router.get("/users/:id", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password -__v");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.json({ message: "User retrieved successfully.", user });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error retrieving user information. " + error.message });
+  }
+});
+//get user by email
+router.get("/users/email/:email", authenticate, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }).select(
+      "-password -__v"
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.json({ message: "User retrieved successfully.", user });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error retrieving user information. " + error.message });
+  }
+});
 
 // Get All Users Route (for testing)
 router.get("/users", async (req, res) => {
@@ -210,6 +240,30 @@ router.delete("/delete-account", authenticate, async (req, res) => {
     );
   } catch (error) {
     res.status(500).send("Failed to delete account. Please try again.");
+  }
+});
+router.get("/user-channels/:userId", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).populate("channels");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Select important info from each channel
+    const channelsInfo = user.channels.map((channel) => ({
+      id: channel._id,
+      name: channel.name,
+      // Add any other important info you need about the channels here
+    }));
+
+    res.json({
+      message: "Channels retrieved successfully.",
+      channels: channelsInfo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Error retrieving channels for the user. " + error.message,
+    });
   }
 });
 
