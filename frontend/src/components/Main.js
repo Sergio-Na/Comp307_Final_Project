@@ -13,9 +13,7 @@ import Profile from "../pages/profile.js";
 
 const Main = () => {
     const location = useLocation();
-    console.log(location)
     const isDashboard = location.pathname.includes('/dashboard');
-    console.log(isDashboard)
 
     return (
         <MainContent>
@@ -49,6 +47,7 @@ const Content = styled.div`
     & > * {
         color: black;
     }
+    background-color: #eeeeee;
 `;
 
 export default Main;

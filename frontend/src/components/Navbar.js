@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
+
 const Navbar = () => {
 
     const navigate = useNavigate()
@@ -23,8 +24,12 @@ const Navbar = () => {
 	return (
 		<Nav>
             <NavSection>
-                <NavLink to="/">
-                    Logo
+                <NavLink to="/" 
+                    style={() => ({
+                        display: 'flex',
+                        alignItems: 'center'   
+                      })}>
+                    <Img  src="logo.svg" alt="Mc"/>
                 </NavLink>
             </NavSection>
             <NavSection>
@@ -82,6 +87,11 @@ const Navbar = () => {
 		</Nav>
 	);
 };
+
+const Img = styled.img`
+    max-width: 50px;
+
+`
 
 
 const Button = styled.button`
