@@ -4,6 +4,7 @@ import axiosInstance from '../axiosConfig'
 import styled from 'styled-components'
 import { useState } from 'react'
 import decodeToken from '../decodeToken'
+import { PacmanLoader } from 'react-spinners'
 
 const Profile = () => {
 
@@ -36,9 +37,9 @@ const Profile = () => {
   return (
     <>
       {loading ? 
-        <>
-        Loading ...
-        </>
+        <Screen>
+          <PacmanLoader color="#84468D" />
+        </Screen>
         :
         <>
           <ProfileContainer>
@@ -77,6 +78,14 @@ const Profile = () => {
     </>
   )
 }
+
+const Screen = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+
+`
 
 const EditButton = styled.button`
   position: absolute;
