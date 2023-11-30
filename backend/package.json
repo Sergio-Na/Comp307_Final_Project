@@ -16,6 +16,6 @@
     "express": "^4.18.2",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.1"
+    "mongoose": "^8.0.2"
   }
 }
