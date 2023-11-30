@@ -13,7 +13,7 @@ import Profile from "../pages/profile.js";
 
 const Main = () => {
     const location = useLocation();
-    const isDashboard = location.pathname.includes('/dashboard');
+    const isDashboard = location.pathname.includes('/dashboard') || location.pathname === ('/profile');
 
     return (
         <MainContent>

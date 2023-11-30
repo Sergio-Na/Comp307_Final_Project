@@ -11,6 +11,8 @@ const Sidebar = () => {
     const location = useLocation();
     const pathName = location.pathname
 
+    const isProfile = location.pathname === '/profile'
+
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     const isActive = (itemName) => pathName.includes(itemName);
@@ -20,7 +22,7 @@ const Sidebar = () => {
 
         {/* Dummy data for now */}
         <ChannelsContainer>
-            <Channels>
+            <Channels $isprofile={isProfile}>
                 <NavLink to="/dashboard/channel1"><ChannelIcon>1</ChannelIcon></NavLink>
                 <NavLink to="/dashboard/channel2"><ChannelIcon>2</ChannelIcon></NavLink>
                 <NavLink to="/dashboard/channel3"><ChannelIcon>3</ChannelIcon></NavLink>
@@ -38,13 +40,18 @@ const Sidebar = () => {
                 </NavLink>
             </BottomSidebar>
         </ChannelsContainer>
-        <SubChannels>
-            <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
-            <SubChannelItem><div>#</div><div>Homework</div></SubChannelItem>
-            <SubChannelItem><div>#</div><div>Midterm</div></SubChannelItem>
-            <SubChannelItem><div>#</div><div>Final</div></SubChannelItem>
-            <SubChannelItem><div>#</div><div>Q&A</div></SubChannelItem>
-        </SubChannels>
+        {!location.pathname.includes('/profile')
+            &&
+            <SubChannels>
+                <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
+                <SubChannelItem><div>#</div><div>Homework</div></SubChannelItem>
+                <SubChannelItem><div>#</div><div>Midterm</div></SubChannelItem>
+                <SubChannelItem><div>#</div><div>Final</div></SubChannelItem>
+                <SubChannelItem><div>#</div><div>Q&A</div></SubChannelItem>
+            </SubChannels>
+
+        }
+
         
     </Container>
   )
@@ -95,6 +102,7 @@ const BottomSidebar = styled.div`
 const Channels = styled.div`
     display: flex;
     flex-direction: column;
+    padding-right: ${props => props.$isprofile ? '30px': '0'};;
     gap: 20px;
 
 `
