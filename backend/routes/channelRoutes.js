@@ -260,5 +260,41 @@ router.get("/channels/:id", authenticate, async (req, res) => {
     });
   }
 });
+// Delete a channel
+router.delete("/channels/:id", authenticate, async (req, res) => {
+  try {
+    const channelId = req.params.id;
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ error: "Channel not found." });
+    }
+
+    // Check if the requester is an admin of the channel
+    const isAdmin = channel.userRoles.some(
+      (ur) => ur.user.equals(req.user.userId) && ur.role === "admin"
+    );
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "Only an admin can delete the channel." });
+    }
+
+    // Remove the channel from each user's channel list
+    await User.updateMany(
+      { _id: { $in: channel.userRoles.map((ur) => ur.user) } },
+      { $pull: { channels: channelId } }
+    );
+
+    // Delete the channel
+    await Channel.findByIdAndDelete(channelId);
+
+    res.json({ message: "Channel deleted successfully." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error deleting the channel. " + error.message });
+  }
+});
 
 module.exports = router;
