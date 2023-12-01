@@ -23,7 +23,17 @@ router.post("/channels", authenticate, async (req, res) => {
       name: req.body.name,
       userRoles: [{ user: req.user.userId, role: "admin" }],
     });
+
+    // Save the channel
     await channel.save();
+
+    // Find the user who is creating the channel and update their channels list
+    const user = await User.findById(req.user.userId);
+    if (user) {
+      user.channels.push(channel._id);
+      await user.save();
+    }
+
     res.status(201).json({
       message: "Channel created successfully.",
       channelId: channel._id,
