@@ -35,7 +35,7 @@ const Profile = () => {
     })
   }, [])
   return (
-    <>
+    <Container>
       {loading ? 
         <Screen>
           <PacmanLoader color="#84468D" />
@@ -56,13 +56,13 @@ const Profile = () => {
                 onError={() => setImgError(true)}
               />
             )}
+            <NameContainer>
+              <Name>{profile?.firstName} {profile?.lastName}</Name>
+            </NameContainer>
             <Bio>
               {profile?.bio}
             </Bio>
-            <NameContainer>
 
-              <Name>{profile?.firstName} {profile?.lastName}</Name>
-            </NameContainer>
             <Email>
               {profile?.email}
             </Email>
@@ -75,9 +75,14 @@ const Profile = () => {
           </ChannelsContainer>
         </>
     }
-    </>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
 const Screen = styled.div`
   width: 100%;
@@ -129,7 +134,9 @@ const ProfileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 40px;
-  max-width: 800px;
+  width: 50%;
+  min-width: 300px;
+  justify-self: center;
   margin: 30px;
   background-color: #f8f8f8;
   border-radius: 10px;

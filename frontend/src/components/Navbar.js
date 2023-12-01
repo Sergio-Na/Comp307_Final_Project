@@ -29,7 +29,7 @@ const Navbar = () => {
                         display: 'flex',
                         alignItems: 'center'   
                       })}>
-                    <Img  src="logo.svg" alt="Mc"/>
+                    <Img  src="logo.svg" />
                 </NavLink>
             </NavSection>
             <NavSection>
