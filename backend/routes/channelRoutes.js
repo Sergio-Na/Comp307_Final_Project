@@ -22,6 +22,7 @@ router.post("/channels", authenticate, async (req, res) => {
     const channel = new Channel({
       name: req.body.name,
       userRoles: [{ user: req.user.userId, role: "admin" }],
+      picture: req.body.picture,
     });
 
     // Save the channel
@@ -43,25 +44,44 @@ router.post("/channels", authenticate, async (req, res) => {
   }
 });
 
-// Update a channel name by ID
-router.patch("/channels/:id/name", authenticate, async (req, res) => {
+// Update a channel by ID
+router.patch("/channels/:id", authenticate, async (req, res) => {
   try {
-    const channel = await Channel.findByIdAndUpdate(
-      req.params.id,
-      { name: req.body.name },
-      { new: true, runValidators: true }
-    );
+    const channelId = req.params.id;
+    const { name, picture } = req.body;
+
+    const channel = await Channel.findById(channelId);
     if (!channel) {
       return res.status(404).json({ error: "Channel not found." });
     }
+
+    // Check if the requester is an admin of the channel
+    const isAdmin = channel.userRoles.some(
+      (ur) => ur.user.equals(req.user.userId) && ur.role === "admin"
+    );
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "Only an admin can update the channel." });
+    }
+
+    // Update the channel with the provided name (if available) and picture
+    if (name) {
+      channel.name = name;
+    }
+    if (picture) {
+      channel.picture = picture;
+    }
+    await channel.save();
+
     res.json({
-      message: "Channel name updated successfully.",
+      message: "Channel updated successfully.",
       channelId: channel._id,
     });
   } catch (error) {
     res
-      .status(400)
-      .json({ error: "Error updating channel name. " + error.message });
+      .status(500)
+      .json({ error: "Error updating the channel. " + error.message });
   }
 });
 
@@ -262,6 +282,7 @@ router.get("/channels/:id", authenticate, async (req, res) => {
         name: channel.name,
         userRoles: formattedUserRoles,
         messages: channel.messages, // Consider populating message sender info if needed
+        picture: channel.picture, // Include the picture field
       },
     });
   } catch (error) {
@@ -270,6 +291,7 @@ router.get("/channels/:id", authenticate, async (req, res) => {
     });
   }
 });
+
 // Delete a channel
 router.delete("/channels/:id", authenticate, async (req, res) => {
   try {

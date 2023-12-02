@@ -16,8 +16,9 @@ const userRoleSchema = new mongoose.Schema({
 // Channel schema
 const channelSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  userRoles: [userRoleSchema], // Includes user references with their roles
-  messages: [messageSchema], // Embedding messages directly in the channel
+  userRoles: [userRoleSchema],
+  messages: [messageSchema],
+  picture: String,
 });
 
 const Channel = mongoose.model("Channel", channelSchema, "Channels");
