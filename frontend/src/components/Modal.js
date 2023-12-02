@@ -43,6 +43,7 @@ const ModalBackdrop = styled.div`
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
 `;
 
 const ModalContainer = styled.div`
@@ -51,6 +52,7 @@ const ModalContainer = styled.div`
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index:10000;
 `;
 
 const CloseButton = styled.button`
