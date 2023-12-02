@@ -5,6 +5,10 @@ import { useState, useEffect } from 'react';
 import axiosInstance from '../axiosConfig';
 import decodeToken from '../decodeToken';
 import Modal from './Modal';
+import { GiAbstract047 } from "react-icons/gi";
+import { CgProfile } from "react-icons/cg";
+
+
 
 
 
@@ -115,14 +119,11 @@ const Sidebar = () => {
 
                 <Channels $isprofile={isProfile}>
                     {channels.map((channel) => (
-                        <NavLink key={channel.id} to={`/dashboard/${channel.id}`}>
-                            <ChannelIcon className='loader'>{channel.name}</ChannelIcon>
+                        <NavLink key={channel} to={`/dashboard/${channel}`}>
+                             {/* Random icon until we get image */}
+                            <ChannelIcon><GiAbstract047 size={24} /></ChannelIcon>
                         </NavLink>
-                        ))}
-                    {/* <NavLink to="/dashboard/channel1"><ChannelIcon>1</ChannelIcon></NavLink>
-                    <NavLink to="/dashboard/channel2"><ChannelIcon>2</ChannelIcon></NavLink>
-                    <NavLink to="/dashboard/channel3"><ChannelIcon>3</ChannelIcon></NavLink>
-                    <NavLink to="/dashboard/channel4"><ChannelIcon>4</ChannelIcon></NavLink> */}
+                    ))}
                 </Channels>
             }
             
@@ -132,8 +133,8 @@ const Sidebar = () => {
                 </ChannelIcon>
                 <NavLink to='/profile'>
                     <ChannelIcon> 
-                        {/* Profile */}
-                        P
+                        <CgProfile size={24} color="#84468D" />
+
                     </ChannelIcon>
                 </NavLink>
             </BottomSidebar>
@@ -276,6 +277,7 @@ const ChannelsContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     margin-left: 20px;
+    margin-right: 10px;
     padding-bottom: 20px;
 
 `
@@ -286,8 +288,11 @@ const colorPulsate = keyframes`
 `;
 
 const ChannelIcon = styled.button`
+    aspect-ratio: 1 /1 ;
+    display: grid;
+    place-content: center;
     background-color: var(--main-accent-color);
-    padding: 20px 30px;
+    padding: 20px 20px;
     width: min-content;
     border-radius: 20px;
     transition: transform 0.5s ease;
