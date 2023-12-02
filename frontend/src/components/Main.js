@@ -28,7 +28,7 @@ const Main = () => {
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/dashboard/channels" element={<ProtectedRoute><Channels /></ProtectedRoute>} />
-                    <Route path="/dashboard/channels/:id" element={<Channel/>} />
+                    <Route path="/dashboard/channels/:id" element={<ProtectedRoute><Channel/></ProtectedRoute>} />
                     <Route path="dashboard/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 </Routes>
             </Content>
