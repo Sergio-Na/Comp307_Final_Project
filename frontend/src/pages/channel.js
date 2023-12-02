@@ -68,6 +68,15 @@ const Channel = () => {
         
         
     }, [channelID]);
+
+    useEffect(() => {
+        if (chatRef.current) {
+            chatRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+            });
+        }
+    }, [channelMessages]);
     
     return (
         
@@ -76,7 +85,6 @@ const Channel = () => {
                 <Loader><PropagateLoader color="#84468D" /></Loader> // Or any loading indicator you prefer
             ) : (
                 <>
-                <div style={{minHeight: "80%"}}>
                     <Header>
                         <HeaderLeft>
                             <h4><strong># {channelName}</strong></h4>
@@ -104,7 +112,6 @@ const Channel = () => {
                             })
                         }
                     </ChatMessages>
-                </div>
             
             <ChatInput
                 token = {token}
@@ -136,20 +143,17 @@ const Loader = styled.div`
 `
 
 const ChatContainer = styled.div`
+    display: flex;
+    flex-direction: column; // Set the direction to column
     flex: 0.7;
-    flex-grow: 1;
     height: 86vh;
-    display: block;
     overflow-y: scroll; // Enable vertical scrolling
 
-    // Hide scrollbar for Chrome, Safari and Opera
     &::-webkit-scrollbar {
-        display: none; // Hide scrollbar in Webkit browsers
+        display: none;
     }
-
-    // Hide scrollbar for IE, Edge, and Firefox
-    -ms-overflow-style: none;  // IE and Edge
-    scrollbar-width: none;  // Firefox
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 `;
 
 
@@ -177,6 +181,8 @@ const HeaderRight= styled.div`
 
 const ChatMessages = styled.div`
     //  margin-bottom: 53px
+    flex-grow: 1; // Allow this component to grow and fill the space
+    overflow-y: auto; // If messages overflow, they can be scrolled
 `;
 
 const ChatBottom = styled.div`
