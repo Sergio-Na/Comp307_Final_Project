@@ -7,7 +7,8 @@ import styled from 'styled-components';
 import Dashboard from "../pages/dashboard";
 import SignUp from '../pages/signup.js'
 import SignIn from "../pages/signin.js";
-import Channels from '../pages/channels.js'
+import Channels from '../pages/channels.js';
+import Channel  from '../pages/channel.js';
 import ProtectedRoute from "./ProtectedRoute.js";
 import Profile from "../pages/profile.js";
 
@@ -27,6 +28,7 @@ const Main = () => {
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/dashboard/channels" element={<ProtectedRoute><Channels /></ProtectedRoute>} />
+                    <Route path="/dashboard/channels/:id" element={<ProtectedRoute><Channel/></ProtectedRoute>} />
                     <Route path="dashboard/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 </Routes>
             </Content>

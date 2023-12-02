@@ -51,8 +51,9 @@ const Profile = () => {
                 <Icon>👤</Icon>
               </IconContainer>
             ) : (
+              
               <Img
-                src={profile?.user?.profilePicture}
+                src={profile?.profilePicture}
                 onError={() => setImgError(true)}
               />
             )}
