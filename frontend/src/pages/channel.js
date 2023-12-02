@@ -55,7 +55,7 @@ const Channel = () => {
             behavior: "smooth",
             block: "end",
         });
-    }, []);
+    }, [channelID]);
     
     return (
         
