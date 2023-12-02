@@ -78,6 +78,7 @@ const Channel = () => {
                             console.log(msg);
                             return (
                                 <Message 
+                                    key={id}
                                     text={text} 
                                     userId={user}
                                     timestamp={new Date(timestamp).toUTCString()}
