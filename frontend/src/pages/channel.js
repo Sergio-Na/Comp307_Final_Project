@@ -5,6 +5,7 @@ import { BsInfoCircle } from 'react-icons/bs'
 import ChatInput from '../components/ChatInput'
 import Message from '../components/Message'
 import axiosInstance from '../axiosConfig';
+import {PropagateLoader} from 'react-spinners'
 
 
 
@@ -15,12 +16,14 @@ const Channel = () => {
     const chatRef = useRef(null);
 
     const [channelMessages, setChannelMessages] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [userRoles, setUserRoles] = useState([]);
     const [channelName, setChannelName] = useState("");
     
 
     useEffect(() => {
-
+        setIsLoading(true)
+        setChannelMessages([])
         const config = {
             headers: {
               Authorization: `Bearer ${token}`
@@ -44,51 +47,57 @@ const Channel = () => {
             if(response.data){
                 setChannelName(response.data.channel.name);
             }
-
+            setIsLoading(false)
+            chatRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+            });
 
         })
         .catch(error => {
             console.error('Error fetching channel information', error);
+            setIsLoading(false)
         });
 
-        chatRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-        });
+        
     }, [channelID]);
     
     return (
         
         <ChatContainer>
-            <div style={{minHeight: "80%"}}>
-                <Header>
-                    <HeaderLeft>
-                        <h4><strong># {channelName}</strong></h4>
-                    </HeaderLeft>
+            {isLoading ? (
+                <Loader><PropagateLoader color="#84468D" /></Loader> // Or any loading indicator you prefer
+            ) : (
+                <>
+                <div style={{minHeight: "80%"}}>
+                    <Header>
+                        <HeaderLeft>
+                            <h4><strong># {channelName}</strong></h4>
+                        </HeaderLeft>
 
-                    <HeaderRight>
-                        <p><BsInfoCircle/> Details</p>
-                    </HeaderRight>
-                </Header>
+                        <HeaderRight>
+                            <p><BsInfoCircle/> Details</p>
+                        </HeaderRight>
+                    </Header>
 
-                <ChatMessages>
-                    {
-                        channelMessages.map( msg => {
-                            const { text, user, id, timestamp } = msg;
-                            console.log(msg);
-                            return (
-                                <Message 
-                                    key={id}
-                                    text={text} 
-                                    userId={user}
-                                    timestamp={new Date(timestamp).toUTCString()}
-                                />
-                            
-                            )
-                        })
-                    }
-                </ChatMessages>
-            </div>
+                    <ChatMessages>
+                        {
+                            channelMessages.map( msg => {
+                                const { text, user, id, timestamp } = msg;
+                                console.log(msg);
+                                return (
+                                    <Message 
+                                        key={id}
+                                        text={text} 
+                                        userId={user}
+                                        timestamp={new Date(timestamp).toUTCString()}
+                                    />
+                                
+                                )
+                            })
+                        }
+                    </ChatMessages>
+                </div>
             
             <ChatInput
                 token = {token}
@@ -100,13 +109,24 @@ const Channel = () => {
             />
 
             <ChatBottom ref={chatRef}/>
-
+            </>
+            )}
         </ChatContainer>
+        
 
     )
 }
 
 export default Channel
+
+const Loader = styled.div`
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;   
+
+`
 
 const ChatContainer = styled.div`
     flex: 0.7;
