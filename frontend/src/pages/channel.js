@@ -112,8 +112,18 @@ const ChatContainer = styled.div`
     flex-grow: 1;
     height: 86vh;
     display: block;
-    overflow: scroll;
+    overflow-y: scroll; // Enable vertical scrolling
+
+    // Hide scrollbar for Chrome, Safari and Opera
+    &::-webkit-scrollbar {
+        display: none; // Hide scrollbar in Webkit browsers
+    }
+
+    // Hide scrollbar for IE, Edge, and Firefox
+    -ms-overflow-style: none;  // IE and Edge
+    scrollbar-width: none;  // Firefox
 `;
+
 
 const Header = styled.div`
     display: flex;
@@ -142,5 +152,5 @@ const ChatMessages = styled.div`
 `;
 
 const ChatBottom = styled.div`
-    padding-bottom: 20px;
+    /* padding-bottom: 20px; */
 `;
