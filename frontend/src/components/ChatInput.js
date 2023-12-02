@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import axiosInstance from '../axiosConfig';
+import { IoSend } from "react-icons/io5";
+
 
 const ChatInput = ({ token, chatRef, channelID, channelName}) => {
     
@@ -42,14 +44,18 @@ const ChatInput = ({ token, chatRef, channelID, channelName}) => {
     }
 
     return (
-    <InputContainer>
-        <form>
-            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={`Message #${channelName}`}/>
-            <button type="submit" style={{display: "none"}} onClick={sendMessage}>
-                SEND
-            </button>
-        </form>
-    </InputContainer>
+        <InputContainer>
+            <form>
+                <input 
+                    value={input} 
+                    onChange={(e) => setInput(e.target.value)} 
+                    placeholder={`Message #${channelName}`}
+                />
+                <SendButton type="submit" onClick={sendMessage}>
+                    <IoSend size={24} color="#84468D" />
+                </SendButton>
+            </form>
+        </InputContainer>
     )
 }
 
@@ -74,5 +80,27 @@ const InputContainer = styled.div`
         border-radius: 3px;
         padding: 20px;
         outline: none;
+    }
+`;
+
+const SendButton = styled.button`
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    &:hover {
+        color: #00a8ff; // change color on hover
+    }
+
+    svg {
+        color: #333; // default color of icon
     }
 `;
