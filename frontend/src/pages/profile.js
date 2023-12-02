@@ -10,6 +10,7 @@ const Profile = () => {
 
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState({})
+  const [channels, setChannels] = useState([])
   const [imgError, setImgError] = useState(false);
 
 
@@ -28,6 +29,14 @@ const Profile = () => {
     axiosInstance.get(`/users/${userId}`, config)
     .then(response => {
         setProfile(response.data.user)
+        axiosInstance.get(`/user-channels/${userId}`, config)
+        .then(channelsRes => {
+          console.log(channelsRes.data.channels)
+          setChannels(channelsRes.data.channels)
+        })
+        .catch(channelsErr => {
+          console.error('Error loading channels', channelsErr)
+        })
         setLoading(false)
     })
     .catch(error => {
@@ -70,8 +79,8 @@ const Profile = () => {
 
           </ProfileContainer>
           <ChannelsContainer>
-            {profile?.channels.map((channel) => (
-              <ChannelItem key={channel}>{channel}</ChannelItem>
+            {channels.map((channel) => (
+              <ChannelItem key={channel.id}>{channel.name}</ChannelItem>
             ))}
           </ChannelsContainer>
         </>
@@ -82,7 +91,9 @@ const Profile = () => {
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 `
 
 const Screen = styled.div`
@@ -123,7 +134,7 @@ const IconContainer = styled.div`
 `;
 
 const Icon = styled.span`
-  font-size: 3em; // Adjust size as needed
+  font-size: 3em; 
 `;
 
 
@@ -183,16 +194,20 @@ const ChannelsContainer = styled.div`
   align-items: center;
   gap: 10px;
   margin-top: 20px;
+  min-width: 200px;
 `;
 
-// Additional Style for Channel Item, if needed
 const ChannelItem = styled.div`
   font-size: 1em;
   color: #444;
   padding: 5px 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  width: fit-content;
+  width: 100%;
+
+  &::before{
+    content: '# '
+  }
 `;
 
 
