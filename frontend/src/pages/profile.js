@@ -71,7 +71,7 @@ const Profile = () => {
           </ProfileContainer>
           <ChannelsContainer>
             {profile?.channels.map((channel) => (
-              {channel}
+              <ChannelItem key={channel}>{channel}</ChannelItem>
             ))}
           </ChannelsContainer>
         </>

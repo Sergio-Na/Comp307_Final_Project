@@ -32,10 +32,10 @@ const Sidebar = () => {
 
     useEffect(() => {
         
-          axiosInstance.get(`/users/${userId}`, config)
+          axiosInstance.get(`/user-channels/${userId}`, config)
             .then(response => {
-                if (Array.isArray(response.data.user.channels)) {
-                setChannels(response.data.user.channels);
+                if (Array.isArray(response.data.channels)) {
+                setChannels(response.data.channels);
                 
                 } else {
                 setChannels([]); // or handle the error accordingly
@@ -119,7 +119,7 @@ const Sidebar = () => {
 
                 <Channels $isprofile={isProfile}>
                     {channels.map((channel) => (
-                        <NavLink key={channel} to={`/dashboard/${channel}`}>
+                        <NavLink key={channel.id} to={`/dashboard/channels/${channel.id}`}>
                              {/* Random icon until we get image */}
                             <ChannelIcon><GiAbstract047 size={24} /></ChannelIcon>
                         </NavLink>
