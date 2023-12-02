@@ -51,7 +51,8 @@ const MessageContainer = styled.div`
     align-items: center;
     padding: 20px;
     width: 100%;
-
+    box-shadow: 0px 24px 3px -24px lightgray;
+    
     > img {
         object-fit: cover;
         height: 50px;
