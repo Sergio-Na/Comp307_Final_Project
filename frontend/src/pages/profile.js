@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { useState } from 'react'
 import decodeToken from '../decodeToken'
 import { PacmanLoader } from 'react-spinners'
+import Modal from '../components/Modal'
 
 const Profile = () => {
 
@@ -12,37 +13,88 @@ const Profile = () => {
   const [profile, setProfile] = useState({})
   const [channels, setChannels] = useState([])
   const [imgError, setImgError] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editProfile, setEditProfile] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    bio: '',
+});
+
+const handleEditSubmit = async (e) => {
+  e.preventDefault();
+
+  const token = window.localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  try {
+    const response = await axiosInstance.put("/update-profile", editProfile, config);
+    // Update profile state with new data
+    setProfile(response.data.user);
+
+    // Close modal and reset any error states if needed
+    setIsEditModalOpen(false);
+    setImgError(false);
+
+    // You can also add a success message or toast notification here
+    console.log('Profile updated successfully');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    // Handle error state here, like showing error messages or notifications
+  }
+};
 
 
 
-  useEffect(() => {
-    const token = window.localStorage.getItem('token')
-    const decodedToken = decodeToken(token);
-    const userId = decodedToken.userId;
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setEditProfile(prevState => ({
+      ...prevState,
+      [name]: value,
+  }));
+};
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
 
-    axiosInstance.get(`/users/${userId}`, config)
-    .then(response => {
-        setProfile(response.data.user)
-        axiosInstance.get(`/user-channels/${userId}`, config)
-        .then(channelsRes => {
-          console.log(channelsRes.data.channels)
-          setChannels(channelsRes.data.channels)
-        })
-        .catch(channelsErr => {
-          console.error('Error loading channels', channelsErr)
-        })
-        setLoading(false)
-    })
-    .catch(error => {
-      console.error('Error fetching user profile', error)
-    })
-  }, [])
+useEffect(() => {
+  const token = window.localStorage.getItem('token');
+  const decodedToken = decodeToken(token);
+  const userId = decodedToken.userId;
+
+  const config = {
+      headers: { Authorization: `Bearer ${token}` }
+  };
+
+  axiosInstance.get(`/users/${userId}`, config)
+      .then(response => {
+          setProfile(response.data.user);
+          return axiosInstance.get(`/user-channels/${userId}`, config);
+      })
+      .then(channelsRes => {
+          setChannels(channelsRes.data.channels);
+      })
+      .catch(error => {
+          console.error('Error fetching data', error);
+      })
+      .finally(() => {
+          setLoading(false);
+      });
+
+}, []); // Empty dependency array to run only on mount
+
+useEffect(() => {
+  if (profile) {
+      setEditProfile({
+          firstName: profile.firstName || '',
+          lastName: profile.lastName || '',
+          email: profile.email || '',
+          bio: profile.bio || '',
+      });
+  }
+}, [profile]); // Run this effect when profile changes
+
+
   return (
     <Container>
       {loading ? 
@@ -52,7 +104,7 @@ const Profile = () => {
         :
         <>
           <ProfileContainer>
-            <EditButton>
+            <EditButton onClick={() => setIsEditModalOpen(true)}>
               Edit
             </EditButton>
           {imgError ? (
@@ -85,9 +137,127 @@ const Profile = () => {
           </ChannelsContainer>
         </>
     }
+    <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+      <EditForm onSubmit={handleEditSubmit}>
+          <FormLabel htmlFor="firstName">First Name</FormLabel>
+          <FormInput 
+              id="firstName"
+              type="text" 
+              name="firstName"
+              value={editProfile.firstName} 
+              onChange={handleChange}
+          />
+
+          <FormLabel htmlFor="lastName">Last Name</FormLabel>
+          <FormInput 
+              id="lastName"
+              type="text" 
+              name="lastName"
+              value={editProfile.lastName} 
+              onChange={handleChange}
+          />
+
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <FormInput 
+              id="email"
+              type="email" 
+              name="email"
+              value={editProfile.email} 
+              onChange={handleChange}
+          />
+
+          <FormLabel htmlFor="bio">Bio</FormLabel>
+          <FormTextArea 
+              id="bio"
+              name="bio"
+              value={editProfile.bio} 
+              onChange={handleChange}
+          />
+
+          <FormButton type="submit">Save Changes</FormButton>
+          <FormButton type="button" onClick={() => setIsEditModalOpen(false)}>Cancel</FormButton>
+      </EditForm>
+    </Modal>
     </Container>
   )
 }
+
+const FormLabel = styled.label`
+  font-size: 1em;
+  color: #333;
+  margin-bottom: 5px;
+`;
+
+const EditForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  min-width: 500px;
+`;
+
+const FormInput = styled.input`
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  color: #333;
+
+  &:focus {
+    outline: none;
+    border-color: var(--main-accent-color);
+    box-shadow: 0 0 3px #aaa;
+  }
+`;
+
+const FormTextArea = styled.textarea`
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  color: #333;
+  min-height: 100px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--main-accent-color);
+    box-shadow: 0 0 3px #aaa;
+  }
+`;
+
+const FormButton = styled.button`
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:first-of-type {
+    background-color: var(--main-bg-color);
+    color: white;
+
+    &:hover {
+      background-color: var(--main-accent-color);
+    }
+  }
+
+  &:last-of-type {
+    background-color: #ddd;
+    color: #333;
+
+    &:hover {
+      background-color: #ccc;
+    }
+  }
+`;
+
+
+
 
 const Container = styled.div`
   display: flex;
