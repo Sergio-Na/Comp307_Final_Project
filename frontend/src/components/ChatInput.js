@@ -1,29 +1,38 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
+import axiosInstance from '../axiosConfig';
 
-const ChatInput = ({ chatRef, channelID, channelName, channelMessages, setHardcodedMessages}) => {
-
-    const date = new Date();
+const ChatInput = ({ token, chatRef, channelID, channelName}) => {
     
     const [input, setInput] = useState('');
 
 
-    const sendMessage = (e) => {
+    const sendMessage = async (e) => {
         e.preventDefault();
 
         if(!channelID){
             return false;
         }
 
-        setHardcodedMessages(
-            [...channelMessages, 
-                {
-                    message: input, 
-                    timestamp: new Date(Date.now()),
-                    userName: "Jane Doe",
-                    profilePic: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-            }]);        
-        
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+
+        const data = {
+            text: input
+        }
+
+        try {
+            const response = await axiosInstance.post(`/channels/${channelID}/messages`, 
+                data, 
+                {headers: headers}
+            );
+            console.log(response.data);
+        } catch (error) {
+            // Update the error state with the error message
+            console.error(error);
+        }
+
         chatRef.current.scrollIntoView({
             behavior: "smooth",
             block: "end",

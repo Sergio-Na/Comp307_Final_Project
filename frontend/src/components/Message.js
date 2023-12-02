@@ -1,19 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import axiosInstance from '../axiosConfig'
 
-const Message = ({ message, timestamp, userName, profilePic }) => {
+const Message = ({ text, userId, timestamp }) => {
+
+    const [user, setUser] = useState({})
+
+    const getUserInfo = async (userId) => {
+        const token = window.localStorage.getItem('token')
+
+        const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+        };
+        console.log(text);
+
+        axiosInstance.get(`/users/${userId}`, config)
+        .then(response => {
+            setUser(response.data.user);
+        })
+        .catch(error => {
+            console.error('Error fetching user info for message display', error)
+        })
+    }
+
+    useEffect(() => {
+        getUserInfo(userId);
+    }, []);
+
     return (
-        <MessageContainer>
-            <img src={profilePic} alt=""/>
+            <MessageContainer>
+                <img src={user.profilePicture} alt=""/>
 
-            <MessageInfo>
-                <h4>
-                    {userName}{' '}
-                    <span>{timestamp.toUTCString()}</span>
-                </h4>
-                <p>{message}</p>
-            </MessageInfo>
-        </MessageContainer>
+                <MessageInfo>
+                    <h4>
+                        {`${user.firstName} ${user.lastName}`}{' '}
+                        <span>{timestamp}</span>
+                    </h4>
+                    <p>{text}</p>
+                </MessageInfo>
+            </MessageContainer>
     )
 }
 

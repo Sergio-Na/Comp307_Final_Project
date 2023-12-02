@@ -4,42 +4,58 @@ import styled from 'styled-components';
 import { BsInfoCircle } from 'react-icons/bs'
 import ChatInput from '../components/ChatInput'
 import Message from '../components/Message'
+import axiosInstance from '../axiosConfig';
+
 
 
 const Channel = () => {
 
-    const date = new Date();
-
+    const channelID = useParams().id; 
+    const token = window.localStorage.getItem('token')
     const chatRef = useRef(null);
 
+    const [channelMessages, setChannelMessages] = useState([]);
+    const [userRoles, setUserRoles] = useState([]);
+    const [channelName, setChannelName] = useState("");
+    
+
     useEffect(() => {
+
+        const config = {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        };
+
+        axiosInstance.get(`/channels/${channelID}`, config)
+        .then(response => {
+            if (Array.isArray(response.data.channel.messages)) {
+                setChannelMessages(response.data.channel.messages);
+            } else {
+                setChannelMessages([]); 
+            }
+
+            if (Array.isArray(response.data.channel.userRoles)) {
+                setUserRoles(response.data.channel.userRoles);
+            } else {
+                setUserRoles([]); 
+            }
+
+            if(response.data){
+                setChannelName(response.data.channel.name);
+            }
+
+
+        })
+        .catch(error => {
+            console.error('Error fetching channel information', error);
+        });
+
         chatRef.current.scrollIntoView({
             behavior: "smooth",
             block: "end",
         });
-    }, [])
-
-    const [channelMessages, setChannelMessages] = useState([
-        {
-            message: "This is a message for testing of UI", 
-            timestamp: new Date(Date.now()),
-            userName: "Diego Castillo",
-            profilePic: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-
-        },
-        {
-            message: "Another hardcoded message to test hihi hahahaha", 
-            timestamp: new Date(Date.now()),
-            userName: "John Doe",
-            profilePic: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-
-        },
-            
-    ]);
-
-    const channelID = useParams().id; 
-
-    const channelName = "channel-name";
+    }, []);
     
     return (
         
@@ -58,14 +74,13 @@ const Channel = () => {
                 <ChatMessages>
                     {
                         channelMessages.map( msg => {
-                            const {message, timestamp, userName, profilePic} = msg;
-
+                            const { text, user, id, timestamp } = msg;
+                            console.log(msg);
                             return (
                                 <Message 
-                                    message={message} 
-                                    timestamp={timestamp} 
-                                    userName={userName}
-                                    profilePic={profilePic}    
+                                    text={text} 
+                                    userId={user}
+                                    timestamp={new Date(timestamp).toUTCString()}
                                 />
                             
                             )
@@ -75,11 +90,12 @@ const Channel = () => {
             </div>
             
             <ChatInput
+                token = {token}
                 chatRef = {chatRef}
                 channelID={channelID}
                 channelName={channelName}
                 channelMessages={channelMessages}
-                setHardcodedMessages={setChannelMessages}
+                setChannelMessages={setChannelMessages}
             />
 
             <ChatBottom ref={chatRef}/>
@@ -126,5 +142,5 @@ const ChatMessages = styled.div`
 `;
 
 const ChatBottom = styled.div`
-    padding-bottom: 70px;
+    padding-bottom: 20px;
 `;

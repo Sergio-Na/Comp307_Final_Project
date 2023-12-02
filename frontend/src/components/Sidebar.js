@@ -24,20 +24,24 @@ const Sidebar = () => {
             headers: {
               Authorization: `Bearer ${token}`
             }
-          };
-          axiosInstance.get(`/users/${userId}`, config)
-            .then(response => {
-                if (Array.isArray(response.data.channels)) {
-                setChannels(response.data.channels);
-                } else {
+        };
+        
+        axiosInstance.get(`/user-channels/${userId}`, config)
+        .then(response => {
+            if (Array.isArray(response.data.channels)) {
+                setChannels(response.data.channels)
+            } else {
                 setChannels([]); // or handle the error accordingly
-                }
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching user profile', error);
-                setLoading(false);
-            });
+            }
+            setLoading(false);
+        })
+        .catch(error => {
+            console.error('Error fetching user profile', error);
+            setLoading(false);
+        });
+        
+
+        console.log(token);
     }, [])
 
 
@@ -63,7 +67,7 @@ const Sidebar = () => {
 
                 <Channels $isprofile={isProfile}>
                     {channels.map((channel) => (
-                        <NavLink key={channel.id} to={`/dashboard/${channel.id}`}>
+                        <NavLink key={channel.id} to={`/dashboard/channels/${channel.id}`}>
                             <ChannelIcon>{channel.name}</ChannelIcon>
                         </NavLink>
                         ))}
@@ -165,6 +169,7 @@ const ChannelsContainer = styled.div`
 `
 
 const ChannelIcon = styled.button`
+    margin-right: 7px;
     background-color: var(--main-accent-color);
     padding: 20px 30px;
     width: min-content;
