@@ -70,7 +70,7 @@ const Sidebar = () => {
         
     }
 
-    const isActive = (itemName) => pathName.includes(itemName);
+    const isactive = (itemName) => pathName.includes(itemName);
 
     const renderLoadingIcons = () => {
         return Array.from({ length: 4 }, (_, i) => (
@@ -103,29 +103,37 @@ const Sidebar = () => {
         }
     }
 
+    const handleNavLinkClick = (e, channelPath) => {
+        if (location.pathname === channelPath) {
+            e.preventDefault();
+        }
+    };
+
   return (
     <Container $iscollapsed={isCollapsed}>
 
-        {/* Dummy data for now */}
         <ChannelsContainer>
-            {
-                loading 
-                ?
-
+        {loading ? (
                     <Channels>
                         {renderLoadingIcons()}
                     </Channels>
-                :
+                ) : (
+                    <Channels $isprofile={isProfile}>
+                        {channels.map((channel) => (
+                            <NavLink 
+                                key={channel.id} 
+                                to={`/dashboard/channels/${channel.id}`}
+                                onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
+                            >
+                                <ChannelIcon 
+                                    $isactive={location.pathname === `/dashboard/channels/${channel.id}`}>
+                                    <GiAbstract047 size={24} />
+                                </ChannelIcon>
+                            </NavLink>
+                        ))}
+                    </Channels>
 
-                <Channels $isprofile={isProfile}>
-                    {channels.map((channel) => (
-                        <NavLink key={channel.id} to={`/dashboard/channels/${channel.id}`}>
-                             {/* Random icon until we get image */}
-                            <ChannelIcon><GiAbstract047 size={24} /></ChannelIcon>
-                        </NavLink>
-                    ))}
-                </Channels>
-            }
+                )}
             
             <BottomSidebar>
                 <ChannelIcon onClick={() => setModalOpen(true)}>
@@ -173,6 +181,11 @@ const Sidebar = () => {
     </Container>
   )
 }
+
+const activeStyle = {
+    backgroundColor: '#FFFFFF', // Inverted color for active state
+    color: 'var(--main-accent-color)' // Adjust as needed
+};
 
 const Button = styled.button`
     background-color: var(--main-accent-color);
@@ -288,27 +301,26 @@ const colorPulsate = keyframes`
 `;
 
 const ChannelIcon = styled.button`
-    aspect-ratio: 1 /1 ;
+    aspect-ratio: 1 / 1;
     display: grid;
     place-content: center;
-    background-color: var(--main-accent-color);
+    background-color: ${props => props.$isactive ? '#FFFFFF' : 'var(--main-accent-color)'};
     padding: 20px 20px;
     width: min-content;
     border-radius: 20px;
     transition: transform 0.5s ease;
 
-    &:hover{
+    &:hover {
         cursor: pointer;
-        transform: scale(1.1)
+        transform: scale(1.1);
     }
 
     &.loading-icon {
         animation: ${colorPulsate} 0.5s ease-in-out infinite;
         background-color: var(--main-accent-color);
-        color: var(--main-accent-color)
+        color: var(--main-accent-color);
     }
-
-`
+`;
 
 
 

@@ -17,6 +17,8 @@ const Channel = () => {
 
     const [channelMessages, setChannelMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+    const minLoadingTime = 1000; // 1 second, adjust as needed
     const [userRoles, setUserRoles] = useState([]);
     const [channelName, setChannelName] = useState("");
     
@@ -29,7 +31,8 @@ const Channel = () => {
               Authorization: `Bearer ${token}`
             }
         };
-
+        setIsLoaderVisible(true);
+        const loaderTimeout = setTimeout(() => setIsLoaderVisible(false), minLoadingTime);
         axiosInstance.get(`/channels/${channelID}`, config)
         .then(response => {
             if (Array.isArray(response.data.channel.messages)) {
@@ -48,24 +51,28 @@ const Channel = () => {
                 setChannelName(response.data.channel.name);
             }
             setIsLoading(false)
-            chatRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "end",
-            });
+            if (chatRef.current) {
+                chatRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "end",
+                });
+            }
 
         })
         .catch(error => {
             console.error('Error fetching channel information', error);
             setIsLoading(false)
         });
-
+        
+        return () => clearTimeout(loaderTimeout);
+        
         
     }, [channelID]);
     
     return (
         
         <ChatContainer>
-            {isLoading ? (
+            {(isLoading || isLoaderVisible) ? (
                 <Loader><PropagateLoader color="#84468D" /></Loader> // Or any loading indicator you prefer
             ) : (
                 <>
@@ -84,10 +91,10 @@ const Channel = () => {
                         {
                             channelMessages.map( msg => {
                                 const { text, user, id, timestamp } = msg;
-                                console.log(msg);
+                                // console.log(msg);
                                 return (
                                     <Message 
-                                        key={id}
+                                        key={Math.random()}
                                         text={text} 
                                         userId={user}
                                         timestamp={new Date(timestamp).toUTCString()}
