@@ -13,8 +13,9 @@ const Channel = () => {
     const chatRef = useRef(null);
 
     useEffect(() => {
-        chatRef?.current?.scrollIntoView({
+        chatRef.current.scrollIntoView({
             behavior: "smooth",
+            block: "end",
         });
     }, [])
 
@@ -38,15 +39,15 @@ const Channel = () => {
 
     const channelID = useParams().id; 
 
-    const channelName = "General";
+    const channelName = "channel-name";
     
     return (
         
         <ChatContainer>
-            <div style={{minHeight: "87%"}}>
+            <div style={{minHeight: "80%"}}>
                 <Header>
                     <HeaderLeft>
-                        <h4><strong>#General</strong></h4>
+                        <h4><strong># {channelName}</strong></h4>
                     </HeaderLeft>
 
                     <HeaderRight>
@@ -81,14 +82,10 @@ const Channel = () => {
                 setHardcodedMessages={setChannelMessages}
             />
 
-            <ChatBottom ref={chatRef} />
+            <ChatBottom ref={chatRef}/>
 
         </ChatContainer>
 
-        
-        
-        
-        
     )
 }
 
@@ -97,8 +94,9 @@ export default Channel
 const ChatContainer = styled.div`
     flex: 0.7;
     flex-grow: 1;
-    overgrow-y: scroll;
-    height: 100%;
+    height: 86vh;
+    display: block;
+    overflow: scroll;
 `;
 
 const Header = styled.div`
@@ -124,9 +122,9 @@ const HeaderRight= styled.div`
 `;
 
 const ChatMessages = styled.div`
-    margin-bottom: 50px
+    //  margin-bottom: 53px
 `;
 
 const ChatBottom = styled.div`
-    padding-bottom: 20px;
+    padding-bottom: 70px;
 `;

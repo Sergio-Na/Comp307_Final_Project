@@ -26,6 +26,7 @@ const ChatInput = ({ chatRef, channelID, channelName, channelMessages, setHardco
         
         chatRef.current.scrollIntoView({
             behavior: "smooth",
+            block: "end",
         })
 
         setInput("");
@@ -49,13 +50,12 @@ const InputContainer = styled.div`
     position: sticky; 
     bottom: 0;
     width: 100%;
-    background-color: #EEEEE;
+    background-color: #EEEEEE;
 
     > form {        
         position: relative;   
         display:flex;
         justify-content: center;
-        padding-bottom: 10px
     }
 
     > form > input {

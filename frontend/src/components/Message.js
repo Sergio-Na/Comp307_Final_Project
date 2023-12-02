@@ -23,6 +23,7 @@ const MessageContainer = styled.div`
     display: flex;
     align-items: center;
     padding: 20px;
+    width: 100%;
 
     > img {
         object-fit: cover;
