@@ -129,35 +129,38 @@ const Sidebar = () => {
                 ) : (
                     <Channels $isprofile={isProfile}>
                         {channels.map((channel) => (
-                            <NavLink 
-                                key={channel.id} 
-                                to={`/dashboard/channels/${channel.id}`}
-                                onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
+                        <NavLink 
+                            key={channel.id} 
+                            to={`/dashboard/channels/${channel.id}`}
+                            onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
+                        >
+                            <ChannelIcon 
+                            $isactive={location.pathname === `/dashboard/channels/${channel.id}`}
+                            data-channel-name={channel.name} // Pass channel name here
                             >
-                                <ChannelIcon $isactive={location.pathname === `/dashboard/channels/${channel.id}`}>
-                                    {
-                                        channel.picture ?
-                                        <ChannelImage 
-                                        
-                                            src={channel.picture} 
-                                            onError={handleImageError}
-                                        />
-                                        :
-                                        <GiAbstract047 size={32} color="#84468D" />
-                                    }
-                                </ChannelIcon>
-                            </NavLink>
+                            {
+                                channel.picture ?
+                                <ChannelImage 
+                                src={channel.picture} 
+                                onError={handleImageError}
+                                />
+                                :
+                                <GiAbstract047 size={32} color="#84468D" />
+                            }
+                            </ChannelIcon>
+                        </NavLink>
                         ))}
+
                     </Channels>
 
                 )}
             
             <BottomSidebar>
-                <ChannelIcon onClick={() => setModalOpen(true)}>
+                <ChannelIcon onClick={() => setModalOpen(true)} data-channel-name="New Channel">
                     +
                 </ChannelIcon>
                 <NavLink to='/profile'>
-                    <ChannelIcon $isactive={location.pathname === `/profile`}> 
+                    <ChannelIcon $isactive={location.pathname === `/profile`} data-channel-name="Profile"> 
                         <CgProfile size={24} color="#84468D" />
 
                     </ChannelIcon>
@@ -234,6 +237,27 @@ const ChannelIcon = styled.button`
     z-index: 1000;
     color: white;
     // Additional styles for positioning, size, color, etc.
+  }
+
+  &::after {
+    content: attr(data-channel-name); // Use attribute for channel name
+    position: absolute;
+    left: 80px;
+    background-color: white;
+    color: var(--main-bg-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    visibility: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    margin-left: 10px; // Gap between icon and tooltip
+    z-index: 1;
+  }
+
+  &:hover::after {
+    visibility: visible;
+    opacity: 1;
   }
 
   &:hover {
