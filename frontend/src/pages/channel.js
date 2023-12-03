@@ -152,7 +152,11 @@ const Channel = () => {
                                 <CgProfile size={40} color="#84468D" /> // Adjust icon size and color as needed
                             )}
                         </UserImageBox>
-                        <UserName>{userRole.firstName} {userRole.lastName}</UserName>
+                        <UserInfo>
+                            <UserName>{userRole.firstName} {userRole.lastName}</UserName>
+                            <UserRoleInfo>{userRole.role}</UserRoleInfo>
+                            
+                        </UserInfo>
                     </UserRole>
                 ))}
             </UsersContainer>
@@ -198,6 +202,18 @@ const UserImage = styled.img`
 
 const UserName = styled.div`
 
+`
+
+const UserRoleInfo = styled.div`
+    font-size: 12px;
+    color: #959595;
+
+`
+
+const UserInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 `
 
 const UsersHeading = styled.h3`
