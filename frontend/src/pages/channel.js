@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import { BsInfoCircle } from 'react-icons/bs'
@@ -50,7 +50,6 @@ const Channel = () => {
             }
 
             if (Array.isArray(response.data.channel.userRoles)) {
-                console.log(response.data.channel.userRoles)
                 setUserRoles(response.data.channel.userRoles);
             } else {
                 setUserRoles([]); 
@@ -78,13 +77,13 @@ const Channel = () => {
         
     }, [channelID]);
 
-    useEffect(() => {
-        if (chatRef.current) {
-            chatRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "end",
-            });
-        }
+    useLayoutEffect(() => {
+        setTimeout(() => {
+            if (chatRef.current) {
+                const chatElement = chatRef.current;
+                chatElement.scrollTop = chatElement.scrollHeight;
+            }
+        }, 1000); // Adjust delay as needed
     }, [channelMessages]);
     
     return (
@@ -106,13 +105,13 @@ const Channel = () => {
                             </HeaderRight>
                         </Header>
 
-                        <ChatMessages>
+                        <ChatMessages ref={chatRef}>
                             {
                                 channelMessages.map( msg => {
-                                    const { text, user, id, timestamp } = msg;
+                                    const { text, user, _id, timestamp } = msg;
                                     return (
                                         <Message 
-                                            key={Math.random()}
+                                            key={_id}
                                             text={text} 
                                             userId={user}
                                             timestamp={new Date(timestamp).toUTCString()}
@@ -132,7 +131,7 @@ const Channel = () => {
                     setChannelMessages={setChannelMessages}
                 />
 
-                <ChatBottom ref={chatRef}/>
+                {/* <ChatBottom ref={chatRef}/> */}
                 </>
                 )}
             </ChatContainer>
