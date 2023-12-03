@@ -253,6 +253,7 @@ router.get("/user-channels/:userId", authenticate, async (req, res) => {
     const channelsInfo = user.channels.map((channel) => ({
       id: channel._id,
       name: channel.name,
+      picture: channel.picture,
       // Add any other important info you need about the channels here
     }));
 
