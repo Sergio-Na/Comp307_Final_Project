@@ -90,6 +90,7 @@ useEffect(() => {
           lastName: profile.lastName || '',
           email: profile.email || '',
           bio: profile.bio || '',
+          profilePicture: profile.profilePicture || '',
       });
   }
 }, [profile]); // Run this effect when profile changes
@@ -139,7 +140,7 @@ useEffect(() => {
     }
     <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
       <EditForm onSubmit={handleEditSubmit}>
-          <FormLabel htmlFor="firstName">First Name</FormLabel>
+          <FormLabel htmlFor="firstName">First Name
           <FormInput 
               id="firstName"
               type="text" 
@@ -147,8 +148,9 @@ useEffect(() => {
               value={editProfile.firstName} 
               onChange={handleChange}
           />
+          </FormLabel>
 
-          <FormLabel htmlFor="lastName">Last Name</FormLabel>
+          <FormLabel htmlFor="lastName">Last Name
           <FormInput 
               id="lastName"
               type="text" 
@@ -156,8 +158,9 @@ useEffect(() => {
               value={editProfile.lastName} 
               onChange={handleChange}
           />
+          </FormLabel>
 
-          <FormLabel htmlFor="email">Email</FormLabel>
+          <FormLabel htmlFor="email">Email
           <FormInput 
               id="email"
               type="email" 
@@ -165,14 +168,26 @@ useEffect(() => {
               value={editProfile.email} 
               onChange={handleChange}
           />
+          </FormLabel>
 
-          <FormLabel htmlFor="bio">Bio</FormLabel>
+          <FormLabel htmlFor="profilePicture">Picture
+          <FormInput 
+              id="profilePicture"
+              type="profilePicture" 
+              name="profilePicture"
+              value={editProfile.profilePicture} 
+              onChange={handleChange}
+          />
+          </FormLabel>
+
+          <FormLabel htmlFor="bio">Bio
           <FormTextArea 
               id="bio"
               name="bio"
               value={editProfile.bio} 
               onChange={handleChange}
           />
+          </FormLabel>
 
           <FormButton type="submit">Save Changes</FormButton>
           <FormButton type="button" onClick={() => setIsEditModalOpen(false)}>Cancel</FormButton>
@@ -183,6 +198,8 @@ useEffect(() => {
 }
 
 const FormLabel = styled.label`
+  display: flex;
+  flex-wrap: wrap;
   font-size: 1em;
   color: #333;
   margin-bottom: 5px;
@@ -205,6 +222,7 @@ const FormInput = styled.input`
   border-radius: 4px;
   font-size: 1em;
   color: #333;
+  width: 100%;
 
   &:focus {
     outline: none;
@@ -220,6 +238,7 @@ const FormTextArea = styled.textarea`
   font-size: 1em;
   color: #333;
   min-height: 100px;
+  width: 100%;
 
   &:focus {
     outline: none;
