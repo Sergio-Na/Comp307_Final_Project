@@ -6,6 +6,7 @@ import ChatInput from '../components/ChatInput'
 import Message from '../components/Message'
 import axiosInstance from '../axiosConfig';
 import {PropagateLoader} from 'react-spinners'
+import { CgProfile } from "react-icons/cg";
 
 
 
@@ -21,6 +22,13 @@ const Channel = () => {
     const minLoadingTime = 1000; // 1 second, adjust as needed
     const [userRoles, setUserRoles] = useState([]);
     const [channelName, setChannelName] = useState("");
+    const [imageLoadErrors, setImageLoadErrors] = useState({});
+
+    // Handler for image load error
+    const handleImageError = (id) => {
+        setImageLoadErrors(prevState => ({ ...prevState, [id]: true }));
+    };
+
     
 
     useEffect(() => {
@@ -42,6 +50,7 @@ const Channel = () => {
             }
 
             if (Array.isArray(response.data.channel.userRoles)) {
+                console.log(response.data.channel.userRoles)
                 setUserRoles(response.data.channel.userRoles);
             } else {
                 setUserRoles([]); 
@@ -79,59 +88,121 @@ const Channel = () => {
     }, [channelMessages]);
     
     return (
+        <ChannelContainer>
+
         
-        <ChatContainer>
-            {(isLoading || isLoaderVisible) ? (
-                <Loader><PropagateLoader color="#84468D" /></Loader> // Or any loading indicator you prefer
-            ) : (
-                <>
-                    <Header>
-                        <HeaderLeft>
-                            <h4><strong># {channelName}</strong></h4>
-                        </HeaderLeft>
+            <ChatContainer>
+                {(isLoading || isLoaderVisible) ? (
+                    <Loader><PropagateLoader color="#84468D" /></Loader> // Or any loading indicator you prefer
+                ) : (
+                    <>
+                        <Header>
+                            <HeaderLeft>
+                                <h4><strong># {channelName}</strong></h4>
+                            </HeaderLeft>
 
-                        <HeaderRight>
-                            <p><BsInfoCircle/> Details</p>
-                        </HeaderRight>
-                    </Header>
+                            <HeaderRight>
+                                <p><BsInfoCircle/> Details</p>
+                            </HeaderRight>
+                        </Header>
 
-                    <ChatMessages>
-                        {
-                            channelMessages.map( msg => {
-                                const { text, user, id, timestamp } = msg;
-                                // console.log(msg);
-                                return (
-                                    <Message 
-                                        key={Math.random()}
-                                        text={text} 
-                                        userId={user}
-                                        timestamp={new Date(timestamp).toUTCString()}
-                                    />
-                                
-                                )
-                            })
-                        }
-                    </ChatMessages>
-            
-            <ChatInput
-                token = {token}
-                chatRef = {chatRef}
-                channelID={channelID}
-                channelName={channelName}
-                channelMessages={channelMessages}
-                setChannelMessages={setChannelMessages}
-            />
+                        <ChatMessages>
+                            {
+                                channelMessages.map( msg => {
+                                    const { text, user, id, timestamp } = msg;
+                                    // console.log(msg);
+                                    return (
+                                        <Message 
+                                            key={Math.random()}
+                                            text={text} 
+                                            userId={user}
+                                            timestamp={new Date(timestamp).toUTCString()}
+                                        />
+                                    
+                                    )
+                                })
+                            }
+                        </ChatMessages>
+                
+                <ChatInput
+                    token = {token}
+                    chatRef = {chatRef}
+                    channelID={channelID}
+                    channelName={channelName}
+                    channelMessages={channelMessages}
+                    setChannelMessages={setChannelMessages}
+                />
 
-            <ChatBottom ref={chatRef}/>
-            </>
-            )}
-        </ChatContainer>
+                <ChatBottom ref={chatRef}/>
+                </>
+                )}
+            </ChatContainer>
+            <UsersContainer>
+                <UsersHeading>Users</UsersHeading>
+                {userRoles.map((userRole) => (
+                    <UserRole key={userRole.id}>
+                        <UserImageBox>
+                            {!imageLoadErrors[userRole.id] && userRole.profilePicture ? (
+                                <UserImage 
+                                    src={userRole.profilePicture} 
+                                    onError={() => handleImageError(userRole.id)}
+                                    alt={`${userRole.firstName}'s Profile`} 
+                                />
+                            ) : (
+                                <CgProfile size={40} color="#84468D" /> // Adjust icon size and color as needed
+                            )}
+                        </UserImageBox>
+                        <UserName>{userRole.firstName} {userRole.lastName}</UserName>
+                    </UserRole>
+                ))}
+            </UsersContainer>
+        </ChannelContainer>
         
 
     )
 }
 
 export default Channel
+
+const ChannelContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    height: 100%; // Make sure the container takes full height if needed
+`;
+
+
+
+const UserRole = styled.div`
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 10px;
+
+`
+
+const UserImageBox = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+const UserImage = styled.img`
+    object-fit: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+
+`
+
+const UserName = styled.div`
+
+`
+
+const UsersHeading = styled.h3`
+
+`
 
 const Loader = styled.div`
     width: 100%;
@@ -143,17 +214,24 @@ const Loader = styled.div`
 `
 
 const ChatContainer = styled.div`
+    flex: 3; // Takes 3 parts of the available space
     display: flex;
-    flex-direction: column; // Set the direction to column
-    flex: 0.7;
-    height: 86vh;
-    overflow-y: scroll; // Enable vertical scrolling
+    flex-direction: column;
+    overflow-y: scroll;
+    max-height: 87vh;
 
     &::-webkit-scrollbar {
         display: none;
     }
     -ms-overflow-style: none;
     scrollbar-width: none;
+`;
+
+const UsersContainer = styled.div`
+    flex: 1; // Takes 1 part of the available space
+    padding: 10px 20px;
+    border-left: 1px solid lightgray;
+    overflow-y: auto; // Enable scrolling if the content overflows
 `;
 
 
