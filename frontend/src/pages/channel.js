@@ -26,6 +26,11 @@ const Channel = () => {
     const [imageLoadErrors, setImageLoadErrors] = useState({});
     const [userSearching, setUserSearching] = useState(false)
     const [userEmail, setUserEmail] = useState("");
+    const [isAddingUser, setIsAddingUser] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+
 
 
     // Handler for image load error
@@ -36,23 +41,31 @@ const Channel = () => {
     const handleAddUserToChannel = async (e) => {
         e.preventDefault();
         if (!userEmail) return;
-        
+    
+        setIsAddingUser(true);
         try {
             const response = await axiosInstance.post(`/channels/${channelID}/users`, 
                 { email: userEmail },
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-            });
-            // Handle the successful addition, e.g., update UI or userRoles state
-            setUserRoles([...userRoles, response.data.user])
-            // console.log(response.data);
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setUserRoles([...userRoles, response.data.user]);
+            setSuccessMessage("User added successfully.");
+            setErrorMessage(""); // Reset error message
+            setUserEmail(""); // Clear input field
+            setIsAddingUser(false);
+            // Display success message or other UI update
         } catch (error) {
             console.error('Error adding user to channel', error);
-            // Handle error, e.g., show error message
+            // Display error message
+            setIsAddingUser(false);
+            setErrorMessage("Error adding user to channel");
+            setSuccessMessage(""); // Reset success message
+
         }
     };
+    
     
     
 
@@ -103,6 +116,25 @@ const Channel = () => {
         
         
     }, [channelID]);
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                setSuccessMessage("");
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
+    
+    useEffect(() => {
+        if (errorMessage) {
+            const timer = setTimeout(() => {
+                setErrorMessage("");
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [errorMessage]);
+    
 
     useLayoutEffect(() => {
         setTimeout(() => {
@@ -163,6 +195,14 @@ const Channel = () => {
                 )}
             </ChatContainer>
             <UsersContainer>
+            {
+                successMessage && <SuccessAlert>{successMessage}</SuccessAlert>
+            }
+            {
+                errorMessage && <ErrorAlert>{errorMessage}</ErrorAlert>
+            }
+
+
                 <UsersHeading>
                     <div>Users</div>
                     <div>
@@ -180,7 +220,10 @@ const Channel = () => {
                             value={userEmail} 
                             onChange={(e) => setUserEmail(e.target.value)} 
                         />
-                        <SearchButton type="submit">Add</SearchButton>
+                        <SearchButton type="submit" disabled={isAddingUser}>
+                            {isAddingUser ? "Adding..." : "Add"}
+                        </SearchButton>
+
                     </SearchForm>
                 }
                 {userRoles.map((userRole) => (
@@ -210,7 +253,31 @@ const Channel = () => {
     )
 }
 
+
+
+
+
 export default Channel
+
+const Alert = styled.div`
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    text-align: center;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+`;
+
+const SuccessAlert = styled(Alert)`
+    background-color: #4CAF50; // Green
+`;
+
+const ErrorAlert = styled(Alert)`
+    background-color: #F44336; // Red
+`;
 
 const SearchForm = styled.form`
     display: flex;
