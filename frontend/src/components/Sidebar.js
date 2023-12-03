@@ -58,16 +58,18 @@ const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const [newChannelInfo, setNewChannelInfo] = useState({
-        name: ''
+        name: '',
+        picture: '',
     })
     const [hasImageError, setHasImageError] = useState(false);
 
     const handleChannelFormChange = (e) => {
         e.preventDefault()
-
-        setNewChannelInfo({
-            name: e.target.value
-        })
+        const { name, value } = e.target;
+        setNewChannelInfo(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
 
         
     }
@@ -97,7 +99,8 @@ const Sidebar = () => {
         console.log(token)
 
         const body = {
-            name: newChannelInfo.name // Replace with the actual channel name you want to send
+            name: newChannelInfo.name, // Replace with the actual channel name you want to send
+            picture: newChannelInfo.picture
         };
 
         console.log(config)
@@ -181,12 +184,13 @@ const Sidebar = () => {
                         <h1>Channel Creation</h1>
                         <h5>Create Forms Here</h5>
                         <ChannelCreationForm onSubmit={(e) => handleChannelCreation(e)} onChange={(e) => {handleChannelFormChange(e)}}>
-                            <Label htmlFor='ChannelName'>
+                            <Label htmlFor='name'>
                                 Channel Name:
-                                <Input id="channelName" name="channelName" />
+                                <Input id="name" name="name" />
                             </Label>
-                            <Label>
-                                Something else here...
+                            <Label htmlFor='picture'>
+                                Picture:
+                                <Input type="url" id="picture" name="picture" />
                             </Label>
 
                             <Button type='submit'>
@@ -280,7 +284,7 @@ const Label = styled.label`
 `
 
 const Input = styled.input`
-    min-width: 300px;
+    min-width: 350px;
     border: 1px solid grey;
     outline: none;
     border-radius: 10px;
