@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axiosInstance from '../axiosConfig'
+import { CgProfile } from "react-icons/cg";
+
 
 const Message = ({ text, userId, timestamp }) => {
 
     const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true);
+    const [imageError, setImageError] = useState(false);
+
+    const handleImageError = (e) => {
+        e.preventDefault()
+        setImageError(true)
+    }
 
 
     const getUserInfo = async (userId) => {
@@ -51,7 +59,13 @@ const Message = ({ text, userId, timestamp }) => {
                 <SkeletonLoader />
             ) : (
                 <>
-                    <img src={user.profilePicture} alt="" />
+                    {
+                        !imageError ? 
+                        <img src={user.profilePicture} alt="" onError={handleImageError}/>
+                        :
+                        <CgProfile size={40} color="#84468D" />
+                    }
+                    
     
                     <MessageInfo>
                         <h4>
