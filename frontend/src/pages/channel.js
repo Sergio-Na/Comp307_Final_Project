@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import axiosInstance from '../axiosConfig';
 import {PropagateLoader} from 'react-spinners'
 import { CgProfile } from "react-icons/cg";
+import { FaCirclePlus } from "react-icons/fa6";
 
 
 
@@ -23,11 +24,37 @@ const Channel = () => {
     const [userRoles, setUserRoles] = useState([]);
     const [channelName, setChannelName] = useState("");
     const [imageLoadErrors, setImageLoadErrors] = useState({});
+    const [userSearching, setUserSearching] = useState(false)
+    const [userEmail, setUserEmail] = useState("");
+
 
     // Handler for image load error
     const handleImageError = (id) => {
         setImageLoadErrors(prevState => ({ ...prevState, [id]: true }));
     };
+
+    const handleAddUserToChannel = async (e) => {
+        e.preventDefault();
+        if (!userEmail) return;
+        
+        try {
+            const response = await axiosInstance.post(`/channels/${channelID}/users`, 
+                { email: userEmail },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+            });
+            // Handle the successful addition, e.g., update UI or userRoles state
+            setUserRoles([...userRoles, response.data.user])
+            // console.log(response.data);
+        } catch (error) {
+            console.error('Error adding user to channel', error);
+            // Handle error, e.g., show error message
+        }
+    };
+    
+    
 
     
 
@@ -136,7 +163,26 @@ const Channel = () => {
                 )}
             </ChatContainer>
             <UsersContainer>
-                <UsersHeading>Users</UsersHeading>
+                <UsersHeading>
+                    <div>Users</div>
+                    <div>
+                        <AddUserButton>
+                            <FaCirclePlus size={28} onClick={() => setUserSearching(!userSearching)}/>
+                        </AddUserButton>
+                    </div>
+                </UsersHeading>
+                {
+                    userSearching &&
+                    <SearchForm onSubmit={handleAddUserToChannel}>
+                        <SearchInput 
+                            type="email" 
+                            placeholder="Enter user email" 
+                            value={userEmail} 
+                            onChange={(e) => setUserEmail(e.target.value)} 
+                        />
+                        <SearchButton type="submit">Add</SearchButton>
+                    </SearchForm>
+                }
                 {userRoles.map((userRole) => (
                     <UserRole key={userRole.id}>
                         <UserImageBox>
@@ -166,11 +212,52 @@ const Channel = () => {
 
 export default Channel
 
+const SearchForm = styled.form`
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+`;
+
+const SearchInput = styled.input`
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+`;
+
+const SearchButton = styled.button`
+    padding: 10px 15px;
+    background-color: #84468D;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #763d7a;
+    }
+`;
+
 const ChannelContainer = styled.div`
     display: flex;
     gap: 10px;
     height: 100%; // Make sure the container takes full height if needed
 `;
+
+const AddUserButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-bg-color);
+    color: white;
+    border-radius: 50%;
+    transition: all 1s ease;
+
+    &:hover{
+        transform: scale(1.05);
+        cursor: pointer;
+    }
+`
 
 
 
@@ -180,7 +267,7 @@ const UserRole = styled.div`
     display: flex;
     gap: 20px;
     align-items: center;
-    padding: 10px;
+    padding: 10px 0;
 
 `
 
@@ -215,7 +302,8 @@ const UserInfo = styled.div`
 `
 
 const UsersHeading = styled.h3`
-
+    display: flex;
+    justify-content: space-between;
 `
 
 const Loader = styled.div`
@@ -228,7 +316,7 @@ const Loader = styled.div`
 `
 
 const ChatContainer = styled.div`
-    flex: 3; // Takes 3 parts of the available space
+    flex: 2; 
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
@@ -243,7 +331,7 @@ const ChatContainer = styled.div`
 
 const UsersContainer = styled.div`
     flex: 1; // Takes 1 part of the available space
-    padding: 10px 20px;
+    padding: 10px 0px 10px 10px;
     border-left: 1px solid lightgray;
     overflow-y: auto; // Enable scrolling if the content overflows
 `;
