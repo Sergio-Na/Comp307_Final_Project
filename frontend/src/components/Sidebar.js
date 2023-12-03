@@ -35,7 +35,7 @@ const Sidebar = () => {
           axiosInstance.get(`/user-channels/${userId}`, config)
             .then(response => {
                 if (Array.isArray(response.data.channels)) {
-                    console.log(response.data.channels)
+
                     setChannels(response.data.channels);
                 
                 } else {
@@ -79,7 +79,6 @@ const Sidebar = () => {
         e.target.style.display = 'none'; // Hides the broken image
     };
 
-    const isactive = (itemName) => pathName.includes(itemName);
 
     const renderLoadingIcons = () => {
         return Array.from({ length: 4 }, (_, i) => (
@@ -135,21 +134,18 @@ const Sidebar = () => {
                                 to={`/dashboard/channels/${channel.id}`}
                                 onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
                             >
-                                {
-                                    channel.picture ?
-                                    <ChannelIcon>
+                                <ChannelIcon $isactive={location.pathname === `/dashboard/channels/${channel.id}`}>
+                                    {
+                                        channel.picture ?
                                         <ChannelImage 
+                                        
                                             src={channel.picture} 
                                             onError={handleImageError}
                                         />
-                                    </ChannelIcon>
-                                    :
-                                    <ChannelIcon>
+                                        :
                                         <GiAbstract047 size={32} color="#84468D" />
-                                    </ChannelIcon>
-
-                                }
-                                
+                                    }
+                                </ChannelIcon>
                             </NavLink>
                         ))}
                     </Channels>
@@ -208,7 +204,7 @@ const ChannelImage = styled.img`
   width: 100%;  // Fill the entire width of the container
   height: 100%; // Fill the entire height of the container
   object-fit: cover; // Cover the entire area, cropping if necessary
-  border-radius: 20px; // Match the border-radius of the container
+  border-radius: 10px; // Match the border-radius of the container
 `;
 
 const colorPulsate = keyframes`
@@ -217,18 +213,32 @@ const colorPulsate = keyframes`
 `;
 
 const ChannelIcon = styled.button`
-  width: 60px; // Set the width of the button
-  height: 60px; // Set the height of the button
-  border-radius: 20px; // Circular shape
-  overflow: hidden; // Hide any part of the image that overflows
-  display: flex; // Use flexbox to center the content
-  align-items: center; // Center content vertically
-  justify-content: center; // Center content horizontally
-  background-color: ${props => props.$isactive ? '#FFFFFF' : 'var(--main-accent-color)'};
+  width: 60px;
+  height: 60px;
+  border-radius: ${props => props.$isactive ? '10px' : '50%'};
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--main-accent-color);
+  transition: border-radius 0.5s ease;
+
+  &::before {
+    content: '${props => props.$isactive ? '•' : ''}';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    transform: translate(-47px, -3px);
+    font-size: 20px;
+    z-index: 1000;
+    color: white;
+    // Additional styles for positioning, size, color, etc.
+  }
 
   &:hover {
     cursor: pointer;
-    transform: scale(1.1);
+    border-radius: 10px;
   }
 
   &.loading-icon {

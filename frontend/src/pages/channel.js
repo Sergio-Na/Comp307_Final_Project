@@ -110,7 +110,6 @@ const Channel = () => {
                             {
                                 channelMessages.map( msg => {
                                     const { text, user, id, timestamp } = msg;
-                                    // console.log(msg);
                                     return (
                                         <Message 
                                             key={Math.random()}
