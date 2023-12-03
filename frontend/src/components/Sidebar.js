@@ -35,7 +35,8 @@ const Sidebar = () => {
           axiosInstance.get(`/user-channels/${userId}`, config)
             .then(response => {
                 if (Array.isArray(response.data.channels)) {
-                setChannels(response.data.channels);
+                    console.log(response.data.channels)
+                    setChannels(response.data.channels);
                 
                 } else {
                 setChannels([]); // or handle the error accordingly
@@ -59,6 +60,7 @@ const Sidebar = () => {
     const [newChannelInfo, setNewChannelInfo] = useState({
         name: ''
     })
+    const [hasImageError, setHasImageError] = useState(false);
 
     const handleChannelFormChange = (e) => {
         e.preventDefault()
@@ -69,6 +71,11 @@ const Sidebar = () => {
 
         
     }
+
+    const handleImageError = (e) => {
+        e.target.onerror = null; // Prevents infinite callback loop
+        e.target.style.display = 'none'; // Hides the broken image
+    };
 
     const isactive = (itemName) => pathName.includes(itemName);
 
@@ -125,10 +132,21 @@ const Sidebar = () => {
                                 to={`/dashboard/channels/${channel.id}`}
                                 onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
                             >
-                                <ChannelIcon 
-                                    $isactive={location.pathname === `/dashboard/channels/${channel.id}`}>
-                                    <GiAbstract047 size={24} />
-                                </ChannelIcon>
+                                {
+                                    channel.picture ?
+                                    <ChannelIcon>
+                                        <ChannelImage 
+                                            src={channel.picture} 
+                                            onError={handleImageError}
+                                        />
+                                    </ChannelIcon>
+                                    :
+                                    <ChannelIcon>
+                                        <GiAbstract047 size={32} color="#84468D" />
+                                    </ChannelIcon>
+
+                                }
+                                
                             </NavLink>
                         ))}
                     </Channels>
@@ -181,6 +199,42 @@ const Sidebar = () => {
     </Container>
   )
 }
+
+const ChannelImage = styled.img`
+  width: 100%;  // Fill the entire width of the container
+  height: 100%; // Fill the entire height of the container
+  object-fit: cover; // Cover the entire area, cropping if necessary
+  border-radius: 20px; // Match the border-radius of the container
+`;
+
+const colorPulsate = keyframes`
+    0%, 100% { background-color: var(--main-accent-color); color: var(--main-accent-color)}
+    50% { background-color: white; color: white}
+`;
+
+const ChannelIcon = styled.button`
+  width: 60px; // Set the width of the button
+  height: 60px; // Set the height of the button
+  border-radius: 20px; // Circular shape
+  overflow: hidden; // Hide any part of the image that overflows
+  display: flex; // Use flexbox to center the content
+  align-items: center; // Center content vertically
+  justify-content: center; // Center content horizontally
+  background-color: ${props => props.$isactive ? '#FFFFFF' : 'var(--main-accent-color)'};
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+
+  &.loading-icon {
+        animation: ${colorPulsate} 0.5s ease-in-out infinite;
+        background-color: var(--main-accent-color);
+        color: var(--main-accent-color);
+    }
+`;
+
+
 
 const activeStyle = {
     backgroundColor: '#FFFFFF', // Inverted color for active state
@@ -290,37 +344,13 @@ const ChannelsContainer = styled.div`
     flex-direction: column;
     justify-content: space-between;
     margin-left: 20px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     padding-bottom: 20px;
 
 `
 
-const colorPulsate = keyframes`
-    0%, 100% { background-color: var(--main-accent-color); color: var(--main-accent-color)}
-    50% { background-color: white; color: white}
-`;
 
-const ChannelIcon = styled.button`
-    aspect-ratio: 1 / 1;
-    display: grid;
-    place-content: center;
-    background-color: ${props => props.$isactive ? '#FFFFFF' : 'var(--main-accent-color)'};
-    padding: 20px 20px;
-    width: min-content;
-    border-radius: 20px;
-    transition: transform 0.5s ease;
 
-    &:hover {
-        cursor: pointer;
-        transform: scale(1.1);
-    }
-
-    &.loading-icon {
-        animation: ${colorPulsate} 0.5s ease-in-out infinite;
-        background-color: var(--main-accent-color);
-        color: var(--main-accent-color);
-    }
-`;
 
 
 
