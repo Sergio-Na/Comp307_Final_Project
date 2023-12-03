@@ -102,11 +102,11 @@ const Sidebar = () => {
             picture: newChannelInfo.picture
         };
 
-        console.log(config)
 
         try {
             const response = await axiosInstance.post('/channels', body, config);
-            console.log(response.data);
+            window.location.reload()
+
         } catch (error) {
             console.error('Error creating channel:', error.response ? error.response.data : error.message);
         }
@@ -323,6 +323,7 @@ const Input = styled.input`
     outline: none;
     border-radius: 10px;
     padding: 5px 10px;
+    width: 100%;
 `
 
 const Container = styled.div`
