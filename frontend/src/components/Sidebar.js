@@ -157,7 +157,7 @@ const Sidebar = () => {
                     +
                 </ChannelIcon>
                 <NavLink to='/profile'>
-                    <ChannelIcon> 
+                    <ChannelIcon $isactive={location.pathname === `/profile`}> 
                         <CgProfile size={24} color="#84468D" />
 
                     </ChannelIcon>

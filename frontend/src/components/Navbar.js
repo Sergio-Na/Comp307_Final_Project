@@ -24,13 +24,9 @@ const Navbar = () => {
 	return (
 		<Nav>
             <NavSection>
-                <NavLink to="/" 
-                    style={() => ({
-                        display: 'flex',
-                        alignItems: 'center'   
-                      })}>
-                    <Img  src="logo.svg" />
-                </NavLink>
+                <StyledNavLink to="/" >
+                    <Img  src="/logo.svg" />
+                </StyledNavLink>
             </NavSection>
             <NavSection>
                 
@@ -87,6 +83,11 @@ const Navbar = () => {
 		</Nav>
 	);
 };
+
+const StyledNavLink = styled(NavLink)`
+    display: flex;
+    align-items: center;
+`;
 
 const Img = styled.img`
     max-width: 50px;
