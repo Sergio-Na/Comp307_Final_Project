@@ -221,23 +221,27 @@ router.get("/channels/:id/messages", authenticate, async (req, res) => {
 router.delete("/channels/:id/users", authenticate, async (req, res) => {
   try {
     const { id } = req.params;
+
     const userEmail = req.body.email;
 
     const channel = await Channel.findById(id);
+
     if (!channel) {
       return res.status(404).json({ error: "Channel not found." });
     }
 
-    // Check if the requestor is an admin in the channel
+    // Check if the requester is an admin in the channel
     const isAdmin = channel.userRoles.some(
       (ur) => ur.user.equals(req.user.userId) && ur.role === "admin"
     );
+
     if (!isAdmin) {
       return res.status(403).json({ error: "Only admins can remove users." });
     }
 
     // Find user by email
     const userToRemove = await User.findOne({ email: userEmail });
+
     if (!userToRemove) {
       return res.status(404).json({ error: "User not found." });
     }
@@ -250,17 +254,17 @@ router.delete("/channels/:id/users", authenticate, async (req, res) => {
 
     // Remove channel from the user's list of channels
     userToRemove.channels = userToRemove.channels.filter(
-      (chId) => !chId.equals(channelId)
+      (chId) => !chId.equals(id)
     );
     await userToRemove.save();
 
     res.json({ message: "User removed from the channel successfully." });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error removing user from channel. " + error.message });
+    console.error("Error removing user from channel:", error); // Log the error
+    res.status(500).json({ error: "Error removing user from channel. " + error.message });
   }
 });
+
 router.get("/channels/:id", authenticate, async (req, res) => {
   try {
     const channel = await Channel.findById(req.params.id).populate(
