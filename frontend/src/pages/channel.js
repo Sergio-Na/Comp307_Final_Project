@@ -9,6 +9,8 @@ import {PropagateLoader} from 'react-spinners'
 import { CgProfile } from "react-icons/cg";
 import { FaCirclePlus } from "react-icons/fa6";
 import AlertMessage from '../components/AlertMessage';
+import decodeToken from '../decodeToken';
+import Modal from '../components/Modal';
 
 
 
@@ -25,6 +27,8 @@ const Channel = () => {
     const chatRef = useRef(null);
 
     const [channelMessages, setChannelMessages] = useState([]);
+    const [channelImage, setChannelImage] = useState()
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
     const [isLoaderVisible, setIsLoaderVisible] = useState(true);
     const minLoadingTime = 1000; // 1 second, adjust as needed
@@ -36,6 +40,42 @@ const Channel = () => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+
+
+    const userId = decodeToken(token).userId; // Assuming you get the current user's ID like this
+    const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+
+
+
+
+    const [editChannelName, setEditChannelName] = useState("");
+    const [editChannelPicture, setEditChannelPicture] = useState("");
+
+    const handleEditChannel = () => {
+        setEditChannelName(channelName);
+        setEditChannelPicture(channelImage);
+        setIsModalOpen(true);
+    };
+
+    const handleChannelUpdate = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axiosInstance.patch(`/channels/${channelID}`, {
+                name: editChannelName,
+                picture: editChannelPicture,
+            }, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+    
+            setSuccessMessage(response.data.message);
+            setChannelName(editChannelName); // Update the channel name in the local state
+            // Optionally, update the channel picture in the local state if needed
+        } catch (error) {
+            setErrorMessage(error.response?.data?.error || 'Failed to update channel');
+        }
+        setIsModalOpen(false);
+    };
+    
 
 
 
@@ -63,6 +103,8 @@ const Channel = () => {
             setUserEmail(""); // Clear input field
             setIsAddingUser(false);
             // Display success message or other UI update
+
+
         } catch (error) {
             console.error('Error adding user to channel', error);
             // Display error message
@@ -90,7 +132,9 @@ const Channel = () => {
         const loaderTimeout = setTimeout(() => setIsLoaderVisible(false), minLoadingTime);
         axiosInstance.get(`/channels/${channelID}`, config)
         .then(response => {
+            setChannelImage(response.data.channel.picture)
             if (Array.isArray(response.data.channel.messages)) {
+                
                 setChannelMessages(response.data.channel.messages);
             } else {
                 setChannelMessages([]); 
@@ -141,6 +185,13 @@ const Channel = () => {
             return () => clearTimeout(timer);
         }
     }, [errorMessage]);
+
+    useEffect(() => {
+        const currentUserId = decodeToken(token).userId; // Decode user ID from token
+        const adminCheck = userRoles.some(role => role.id === currentUserId && role.role === 'admin');
+        setIsCurrentUserAdmin(adminCheck);
+    }, [userRoles, token]);
+    
     
 
     useLayoutEffect(() => {
@@ -154,6 +205,21 @@ const Channel = () => {
     
     return (
         <ChannelContainer>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <ModalContent>
+                    <ChannelEditForm onSubmit={handleChannelUpdate}>
+                        <Label>
+                            Channel Name:
+                            <Input type="text" value={editChannelName} onChange={(e) => setEditChannelName(e.target.value)} />
+                        </Label>
+                        <Label>
+                            Picture URL:
+                            <Input type="text" value={editChannelPicture} onChange={(e) => setEditChannelPicture(e.target.value)} />
+                        </Label>
+                        <SubmitButton type="submit">Update Channel</SubmitButton>
+                    </ChannelEditForm>
+                </ModalContent>
+            </Modal>
             <AlertMessage message={successMessage} type="success" clearMessage={clearSuccessMessage} />
             <AlertMessage message={errorMessage} type="error" clearMessage={clearErrorMessage} />
 
@@ -168,9 +234,14 @@ const Channel = () => {
                                 <h4><strong># {channelName}</strong></h4>
                             </HeaderLeft>
 
-                            <HeaderRight>
+                            {/* <HeaderRight>
                                 <p><BsInfoCircle/> Details</p>
-                            </HeaderRight>
+                            </HeaderRight> */}
+                            {isCurrentUserAdmin && (
+                            <EditButton onClick={handleEditChannel}>
+                                Edit
+                            </EditButton>
+            )}
                         </Header>
 
                         <ChatMessages ref={chatRef}>
@@ -202,6 +273,8 @@ const Channel = () => {
                 {/* <ChatBottom ref={chatRef}/> */}
                 </>
                 )}
+                <AlertMessage message={successMessage} type="success" clearMessage={clearSuccessMessage} />
+                <AlertMessage message={errorMessage} type="error" clearMessage={clearErrorMessage} />
             </ChatContainer>
             <UsersContainer>
 
@@ -261,7 +334,48 @@ const Channel = () => {
 
 export default Channel
 
+const ChannelEditForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+`;
 
+const Label = styled.label`
+    display: block;
+`;
+
+const Input = styled.input`
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+`;
+
+const SubmitButton = styled.button`
+    background-color: var(--main-bg-color);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--main-accent-color);
+        color: black;
+    }
+`;
+
+
+const ModalContent = styled.div`
+    width: 40vw;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: black;
+
+`
 
 
 const SearchForm = styled.form`
@@ -294,6 +408,32 @@ const ChannelContainer = styled.div`
     display: flex;
     gap: 10px;
     height: 100%; // Make sure the container takes full height if needed
+`;
+
+const EditButton = styled.button`
+display: flex;
+align-items: center;
+  background-color: var(--main-bg-color); // A pleasant blue color
+  color: white;
+  font-size: 12px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  /* margin-top: 10px; */
+  align-self: flex-start; // Aligns the button to the start of its container
+
+  &:hover {
+    background-color: var(--main-accent-color); // Slightly darker shade of blue on hover
+    color: black;
+  }
+
+  &:active {
+    background-color: var(--main-bg-color);
+    transform: translateY(1px); 
+  }
 `;
 
 const AddUserButton = styled.button`
@@ -392,6 +532,7 @@ const UsersContainer = styled.div`
 const Header = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 20px;
     border-bottom: 1px solid lightgray
 `;
@@ -415,8 +556,4 @@ const ChatMessages = styled.div`
     //  margin-bottom: 53px
     flex-grow: 1; // Allow this component to grow and fill the space
     overflow-y: auto; // If messages overflow, they can be scrolled
-`;
-
-const ChatBottom = styled.div`
-    /* padding-bottom: 20px; */
 `;
