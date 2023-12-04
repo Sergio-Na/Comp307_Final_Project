@@ -579,6 +579,12 @@ const UserRole = styled.div`
     gap: 20px;
     align-items: center;
     padding: 10px 0;
+    border-radius: 5px;
+
+    &:hover{
+        cursor: pointer;
+        background-color: var(--main-accent-color)
+    }
 
 `
 
@@ -586,6 +592,7 @@ const UserImageBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-left: 10px;
 `
 
 const UserImage = styled.img`
