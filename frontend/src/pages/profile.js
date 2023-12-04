@@ -6,9 +6,11 @@ import { useState } from 'react'
 import decodeToken from '../decodeToken'
 import { PacmanLoader } from 'react-spinners'
 import Modal from '../components/Modal'
+import AlertMessage from '../components/AlertMessage'
 
 const Profile = () => {
-
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState({})
   const [channels, setChannels] = useState([])
@@ -35,12 +37,16 @@ const handleEditSubmit = async (e) => {
     setProfile(response.data.user);
 
     // Close modal and reset any error states if needed
+    setSuccessMessage('Profile Edited successfully!');
+    setErrorMessage(''); // Clear any previous error messages
     setIsEditModalOpen(false);
     setImgError(false);
 
     // You can also add a success message or toast notification here
     console.log('Profile updated successfully');
   } catch (error) {
+    setErrorMessage('Error editing profile: ' + (error.response ? error.response.data : error.message));
+    setSuccessMessage('');
     console.error('Error updating profile:', error);
     // Handle error state here, like showing error messages or notifications
   }
@@ -98,6 +104,8 @@ useEffect(() => {
 
   return (
     <Container>
+        <AlertMessage message={successMessage} type="success" clearMessage={setSuccessMessage} />
+        <AlertMessage message={errorMessage} type="error" clearMessage={setErrorMessage} />
       {loading ? 
         <Screen>
           <PacmanLoader color="#84468D" />

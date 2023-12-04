@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, Routes, Route } from "react-router-dom";
+import { useLocation, Routes, Route, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Home from "../pages";
 import About from "../pages/about";
@@ -11,10 +11,18 @@ import Channels from '../pages/channels.js';
 import Channel  from '../pages/channel.js';
 import ProtectedRoute from "./ProtectedRoute.js";
 import Profile from "../pages/profile.js";
+import { useEffect } from "react";
+import isTokenExpired from "../isTokenExpired.js";
+import decodeToken from "../decodeToken.js";
 
 const Main = () => {
     const location = useLocation();
+    const navigate = useNavigate()
     const isDashboard = location.pathname.includes('/dashboard') || location.pathname === ('/profile');
+
+
+
+    
 
     return (
         <MainContent>

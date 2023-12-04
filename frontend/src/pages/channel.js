@@ -17,8 +17,11 @@ const Channel = () => {
     const clearSuccessMessage = () => setSuccessMessage("");
     const clearErrorMessage = () => setErrorMessage("");
 
+
+
     const channelID = useParams().id; 
     const token = window.localStorage.getItem('token')
+
     const chatRef = useRef(null);
 
     const [channelMessages, setChannelMessages] = useState([]);
