@@ -29,6 +29,7 @@ const Channel = () => {
     const [channelMessages, setChannelMessages] = useState([]);
     const [channelImage, setChannelImage] = useState()
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoaderVisible, setIsLoaderVisible] = useState(true);
     const minLoadingTime = 1000; // 1 second, adjust as needed
@@ -42,7 +43,6 @@ const Channel = () => {
     const [errorMessage, setErrorMessage] = useState("");
 
 
-    const userId = decodeToken(token).userId; // Assuming you get the current user's ID like this
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
 
@@ -75,6 +75,22 @@ const Channel = () => {
         }
         setIsModalOpen(false);
     };
+
+    const handleDeleteChannel = async () => {
+        try {
+            const response = await axiosInstance.delete(`/channels/${channelID}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+    
+            setSuccessMessage(response.data.message); // Set success message only here
+            window.location.href = '/dashboard'; // Redirect after successful deletion
+        } catch (error) {
+            setErrorMessage(error.response?.data?.error || 'Failed to delete channel');
+        } finally {
+            setShowDeleteConfirmModal(false); // Close modal regardless of outcome
+        }
+    };
+    
     
 
 
@@ -205,8 +221,19 @@ const Channel = () => {
     
     return (
         <ChannelContainer>
+            <Modal isOpen={showDeleteConfirmModal} onClose={() => setShowDeleteConfirmModal(false)}>
+                <ModalContent>
+                    <p>Are you sure you want to delete this channel?</p>
+                    <ButtonGroup>
+                        <ConfirmButton onClick={handleDeleteChannel}>Yes, Delete</ConfirmButton>
+                        <CancelButton onClick={() => setShowDeleteConfirmModal(false)}>Cancel</CancelButton>
+                    </ButtonGroup>
+                </ModalContent>
+            </Modal>
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalContent>
+                
+
                     <ChannelEditForm onSubmit={handleChannelUpdate}>
                         <Label>
                             Channel Name:
@@ -217,6 +244,13 @@ const Channel = () => {
                             <Input type="text" value={editChannelPicture} onChange={(e) => setEditChannelPicture(e.target.value)} />
                         </Label>
                         <SubmitButton type="submit">Update Channel</SubmitButton>
+                        <DeleteButton type="button" onClick={() => {
+                            setSuccessMessage(""); // Reset success message
+                            setIsModalOpen(false)
+                            setShowDeleteConfirmModal(true);
+                        }}>
+                            Delete
+                        </DeleteButton>
                     </ChannelEditForm>
                 </ModalContent>
             </Modal>
@@ -334,6 +368,36 @@ const Channel = () => {
 
 export default Channel
 
+const ButtonGroup = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const ConfirmButton = styled.button`
+    background-color: #FF6347;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+
+    &:hover{
+        cursor: pointer;
+    }
+    // ... additional styles ...
+`;
+
+const CancelButton = styled.button`
+    background-color: #808080; // Grey color
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    &:hover{
+        cursor: pointer;
+    }
+    // ... additional styles ...
+`;
+
 const ChannelEditForm = styled.form`
     display: flex;
     flex-direction: column;
@@ -365,6 +429,9 @@ const SubmitButton = styled.button`
         color: black;
     }
 `;
+const DeleteButton = styled(SubmitButton)`
+    background-color: red;
+`
 
 
 const ModalContent = styled.div`
