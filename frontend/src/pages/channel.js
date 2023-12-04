@@ -11,10 +11,19 @@ import { FaCirclePlus } from "react-icons/fa6";
 import AlertMessage from '../components/AlertMessage';
 import decodeToken from '../decodeToken';
 import Modal from '../components/Modal';
+import ContextMenu from '../components/ContextMenu';
 
 
 
 const Channel = () => {
+
+    const [contextMenu, setContextMenu] = useState({
+        mouseX: null,
+        mouseY: null,
+        userEmail: null,
+    });
+    
+    
 
     const clearSuccessMessage = () => setSuccessMessage("");
     const clearErrorMessage = () => setErrorMessage("");
@@ -50,6 +59,37 @@ const Channel = () => {
 
     const [editChannelName, setEditChannelName] = useState("");
     const [editChannelPicture, setEditChannelPicture] = useState("");
+
+    const handleRightClickOnUser = (event, userEmail) => {
+        event.preventDefault();
+        if (!isCurrentUserAdmin) return;
+        
+        setContextMenu({
+            mouseX: event.clientX - 2,
+            mouseY: event.clientY - 4,
+            userEmail,
+        });
+    };
+
+    
+    const handleRemoveUser = async () => {
+        try {
+            const response = await axiosInstance.delete(`/channels/${channelID}/users`, {
+                headers: { Authorization: `Bearer ${token}` },
+                data: { email: contextMenu.userEmail }, // Axios DELETE with body
+            });
+    
+            setSuccessMessage(response.data.message);
+            // Update the userRoles state to reflect the removal
+            setUserRoles(userRoles.filter((user) => user.email !== contextMenu.userEmail));
+        } catch (error) {
+            setErrorMessage(error.response?.data?.error || 'Failed to remove user');
+        }
+    
+        setContextMenu({ mouseX: null, mouseY: null, userEmail: null });
+    };
+    
+    
 
     const handleEditChannel = () => {
         setEditChannelName(channelName);
@@ -207,6 +247,11 @@ const Channel = () => {
         const adminCheck = userRoles.some(role => role.id === currentUserId && role.role === 'admin');
         setIsCurrentUserAdmin(adminCheck);
     }, [userRoles, token]);
+
+    const closeContextMenu = () => {
+        setContextMenu({ mouseX: null, mouseY: null, userEmail: null });
+    };
+    
     
     
 
@@ -313,6 +358,13 @@ const Channel = () => {
             <UsersContainer>
 
                 <UsersHeading>
+                <ContextMenu 
+                    mouseX={contextMenu.mouseX}
+                    mouseY={contextMenu.mouseY}
+                    onClose={closeContextMenu}
+                    onRemoveUser={handleRemoveUser}
+                />
+
                     <div>Users</div>
                     <div>
                         <AddUserButton>
@@ -336,7 +388,7 @@ const Channel = () => {
                     </SearchForm>
                 }
                 {userRoles.map((userRole) => (
-                    <UserRole key={userRole.id}>
+                    <UserRole key={userRole.id} onContextMenu={(e) => handleRightClickOnUser(e, userRole.email)}>
                         <UserImageBox>
                             {!imageLoadErrors[userRole.id] && userRole.profilePicture ? (
                                 <UserImage 
