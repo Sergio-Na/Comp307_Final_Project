@@ -8,10 +8,14 @@ import axiosInstance from '../axiosConfig';
 import {PropagateLoader} from 'react-spinners'
 import { CgProfile } from "react-icons/cg";
 import { FaCirclePlus } from "react-icons/fa6";
+import AlertMessage from '../components/AlertMessage';
 
 
 
 const Channel = () => {
+
+    const clearSuccessMessage = () => setSuccessMessage("");
+    const clearErrorMessage = () => setErrorMessage("");
 
     const channelID = useParams().id; 
     const token = window.localStorage.getItem('token')
@@ -147,6 +151,8 @@ const Channel = () => {
     
     return (
         <ChannelContainer>
+            <AlertMessage message={successMessage} type="success" clearMessage={clearSuccessMessage} />
+            <AlertMessage message={errorMessage} type="error" clearMessage={clearErrorMessage} />
 
         
             <ChatContainer>
@@ -195,13 +201,6 @@ const Channel = () => {
                 )}
             </ChatContainer>
             <UsersContainer>
-            {
-                successMessage && <SuccessAlert>{successMessage}</SuccessAlert>
-            }
-            {
-                errorMessage && <ErrorAlert>{errorMessage}</ErrorAlert>
-            }
-
 
                 <UsersHeading>
                     <div>Users</div>
@@ -259,25 +258,8 @@ const Channel = () => {
 
 export default Channel
 
-const Alert = styled.div`
-    padding: 10px 20px;
-    border-radius: 4px;
-    color: white;
-    text-align: center;
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-`;
 
-const SuccessAlert = styled(Alert)`
-    background-color: #4CAF50; // Green
-`;
 
-const ErrorAlert = styled(Alert)`
-    background-color: #F44336; // Red
-`;
 
 const SearchForm = styled.form`
     display: flex;

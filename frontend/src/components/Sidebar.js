@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axiosInstance from '../axiosConfig';
 import decodeToken from '../decodeToken';
 import Modal from './Modal';
+import AlertMessage from './AlertMessage';
 import { GiAbstract047 } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
 
@@ -15,6 +16,10 @@ import { CgProfile } from "react-icons/cg";
 
 
 const Sidebar = () => {
+
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
     const location = useLocation();
     const pathName = location.pathname;
 
@@ -35,7 +40,6 @@ const Sidebar = () => {
           axiosInstance.get(`/user-channels/${userId}`, config)
             .then(response => {
                 if (Array.isArray(response.data.channels)) {
-
                     setChannels(response.data.channels);
                 
                 } else {
@@ -95,8 +99,6 @@ const Sidebar = () => {
     const handleChannelCreation = async (e) => {
         e.preventDefault();
 
-        console.log(token)
-
         const body = {
             name: newChannelInfo.name, // Replace with the actual channel name you want to send
             picture: newChannelInfo.picture
@@ -105,10 +107,25 @@ const Sidebar = () => {
 
         try {
             const response = await axiosInstance.post('/channels', body, config);
-            window.location.reload()
+            setSuccessMessage('Channel created successfully!');
+            setErrorMessage('');
+            setChannels([
+                ...channels,
+                {
+                    name: newChannelInfo.name,
+                    picture: newChannelInfo.picture,
+                    id: response.data.channelId
+
+                }
+            ])
+            setModalOpen(false)
+             // Clear any previous error messages
+            // window.location.reload()
 
         } catch (error) {
             console.error('Error creating channel:', error.response ? error.response.data : error.message);
+            setErrorMessage('Error creating channel: ' + (error.response ? error.response.data : error.message));
+            setSuccessMessage(''); // Clear any previous success messages
         }
     }
 
@@ -120,6 +137,8 @@ const Sidebar = () => {
 
   return (
     <Container $iscollapsed={isCollapsed}>
+        <AlertMessage message={successMessage} type="success" clearMessage={setSuccessMessage} />
+        <AlertMessage message={errorMessage} type="error" clearMessage={setErrorMessage} />
 
         <ChannelsContainer>
         {loading ? (
@@ -240,6 +259,7 @@ const ChannelIcon = styled.button`
   }
 
   &::after {
+    display: none;
     content: attr(data-channel-name); // Use attribute for channel name
     position: absolute;
     left: 80px;
@@ -256,6 +276,7 @@ const ChannelIcon = styled.button`
   }
 
   &:hover::after {
+    display: block;
     visibility: visible;
     opacity: 1;
   }
