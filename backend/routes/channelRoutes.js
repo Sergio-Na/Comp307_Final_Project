@@ -333,4 +333,58 @@ router.delete("/channels/:id", authenticate, async (req, res) => {
   }
 });
 
+//Search a user
+router.get("/channel:id/users", authenticate, async (req, res) => {
+  try {
+    const channel = await Channel.findById(req.params.id);
+    if (!channel) {
+      return res.status(404).json({error: "Channel not found."});
+    }
+    const userToSearch = await User.findOne({ email: req.body.email });
+    if (!userToSearch) {
+      return res.status(404).json({ error: "User not found." });
+    }
+    // Check for duplicate user in the channel
+    const isUserAlreadyInChannel = channel.userRoles.some((ur) =>
+      ur.user.equals(userToASearch._id)
+    );
+    if (!isUserAlreadyInChannel) {
+      return res.status(404).json({error: "User not found in channel."})
+    }
+      return res.status(200).json({
+        message: "User retrieved succesfully",
+        user: userToSearch
+      })
+  } catch (error) {
+    res.status(400).json({error: "Error searching user in channel. " + error.message})
+  }
+});
+
+//Search a message
+router.get("/channel:id/messages", authenticate, async (req, res) => {
+  try {
+    //check if channel exists
+    const channel = await Channel.findById(req.params.id);
+    if (!channel) {
+      return res.status(404).json({error: "Channel not found."});
+    }
+    //get all message log from channel
+    const channelMessageLog = channel.messages;
+    //check if message exists in message log 
+    for (let i = 0; i < channelMessageLog.length; i++) {
+      currentMessage = channelMessageLog[i];
+      if (currentMessage.text == req.params.text) {
+        return res.status(200).json({
+          message: "Message found inside channel",
+          data: currentMessage
+        })
+      }
+    }
+    return res.status(404).json({
+      error: "Message not found in channel"})
+  }catch (error){
+    res.status(400).json({error: "Error searching message in channel. " + error.message})
+  }
+});
+
 module.exports = router;
