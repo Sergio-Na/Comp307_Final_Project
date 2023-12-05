@@ -22,6 +22,8 @@ const Profile = () => {
     email: '',
     bio: '',
 });
+const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+
 
 const handleEditSubmit = async (e) => {
   e.preventDefault();
@@ -89,6 +91,24 @@ useEffect(() => {
 
 }, []); // Empty dependency array to run only on mount
 
+const handleDeleteAccount = async () => {
+  const token = window.localStorage.getItem('token');
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  };
+
+  try {
+    await axiosInstance.delete("/delete-account", config);
+    window.localStorage.removeItem('token'); // Remove token from local storage
+    setSuccessMessage("Your account has been deleted successfully.");
+    // Redirect user to login or home page
+    window.location.href = '/signin'; // Adjust as necessary
+  } catch (error) {
+    setErrorMessage("Failed to delete account. Please try again.");
+  }
+};
+
+
 useEffect(() => {
   if (profile) {
       setEditProfile({
@@ -137,8 +157,19 @@ useEffect(() => {
             <Email>
               {profile?.email}
             </Email>
-
+            <DeleteAccountButton onClick={() => setShowDeleteAccountModal(true)}>
+              Delete Account
+            </DeleteAccountButton>
           </ProfileContainer>
+          <Modal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)}>
+            <ModalContent>
+              <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+              <ButtonGroup>
+                <ConfirmButton onClick={handleDeleteAccount}>Yes, Delete</ConfirmButton>
+                <CancelButton onClick={() => setShowDeleteAccountModal(false)}>Cancel</CancelButton>
+              </ButtonGroup>
+            </ModalContent>
+          </Modal>
           <ChannelsContainer>
             {channels.map((channel) => (
               <ChannelItem key={channel.id}>{channel.name}</ChannelItem>
@@ -204,6 +235,63 @@ useEffect(() => {
     </Container>
   )
 }
+
+const ButtonGroup = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const ConfirmButton = styled.button`
+    background-color: #FF6347;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+
+    &:hover{
+        cursor: pointer;
+    }
+    // ... additional styles ...
+`;
+
+const CancelButton = styled.button`
+    background-color: #808080; // Grey color
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    &:hover{
+        cursor: pointer;
+    }
+    // ... additional styles ...
+`;
+
+const ModalContent = styled.div`
+    width: 40vw;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: black;
+
+`
+
+const DeleteAccountButton = styled.button`
+  background-color: red;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darkred;
+  }
+`;
+
 
 const FormLabel = styled.label`
   display: flex;
