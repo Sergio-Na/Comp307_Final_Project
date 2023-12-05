@@ -6,6 +6,8 @@ import { CgProfile } from "react-icons/cg";
 
 const Message = ({ text, userId, timestamp }) => {
 
+    console.log(text, userId, timestamp)
+
     const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true);
     const [imageError, setImageError] = useState(false);

@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import axiosInstance from '../axiosConfig';
 import { IoSend } from "react-icons/io5";
+import decodeToken from '../decodeToken';
 
 
-const ChatInput = ({ token, chatRef, channelID, channelName}) => {
+const ChatInput = ({ token, chatRef, channelID, channelName, addMessage}) => {
     
     const [input, setInput] = useState('');
+
+    const userId = decodeToken(token).userId
 
 
     const sendMessage = async (e) => {
@@ -29,7 +32,12 @@ const ChatInput = ({ token, chatRef, channelID, channelName}) => {
                 data, 
                 {headers: headers}
             );
+
             console.log(response.data);
+            addMessage({
+                text: input,
+                user: userId,
+            })
         } catch (error) {
             // Update the error state with the error message
             console.error(error);
@@ -39,7 +47,8 @@ const ChatInput = ({ token, chatRef, channelID, channelName}) => {
             behavior: "smooth",
             block: "end",
         })
-
+        
+        
         setInput("");
     }
 

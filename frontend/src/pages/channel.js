@@ -172,7 +172,16 @@ const Channel = () => {
     };
     
     
-    
+    const addMessage = (message) => {
+        const date = new Date()
+        const now = date.toISOString()
+        setChannelMessages([...channelMessages, {
+            text: message.text,
+            user: message.user,
+            _id: 0,
+            timestamp: now
+        }])
+    }
 
     
 
@@ -347,6 +356,7 @@ const Channel = () => {
                     channelName={channelName}
                     channelMessages={channelMessages}
                     setChannelMessages={setChannelMessages}
+                    addMessage={addMessage}
                 />
 
                 {/* <ChatBottom ref={chatRef}/> */}
