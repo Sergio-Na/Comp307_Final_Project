@@ -11,10 +11,6 @@ import { CgProfile } from "react-icons/cg";
 
 
 
-
-
-
-
 const Sidebar = () => {
 
     const [successMessage, setSuccessMessage] = useState('');
@@ -186,7 +182,7 @@ const Sidebar = () => {
                 </NavLink>
             </BottomSidebar>
         </ChannelsContainer>
-        {!location.pathname.includes('/profile')
+        {/* {!location.pathname.includes('/profile')
             &&
             <SubChannels>
                 <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
@@ -196,7 +192,7 @@ const Sidebar = () => {
                 <SubChannelItem><div>#</div><div>Q&A</div></SubChannelItem>
             </SubChannels>
 
-        }
+        } */}
                 <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
                     <ModalContent>
                         <h1>Channel Creation</h1>
