@@ -265,7 +265,6 @@ const Channel = ( {socket} ) => {
         socket.on('messageResponse', (data) => {
             const date = new Date();
             const now = date.toISOString();
-            console.log(channelMessages);
 
             setChannelMessages([...channelMessages, {
                 text: data.text,
@@ -274,7 +273,7 @@ const Channel = ( {socket} ) => {
                 timestamp: now
             }])
         });
-    }, [socket]);
+    }, [socket, channelMessages]);
     
 
     useLayoutEffect(() => {
