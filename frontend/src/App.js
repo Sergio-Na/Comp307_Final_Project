@@ -15,7 +15,7 @@ function App() {
       <Router>
           <AppContainer>
               <Navbar />
-              <Main /> 
+              <Main socket={socket}/> 
           </AppContainer>
       </Router>
   );

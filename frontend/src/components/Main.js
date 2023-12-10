@@ -15,7 +15,7 @@ import { useEffect } from "react";
 import isTokenExpired from "../isTokenExpired.js";
 import decodeToken from "../decodeToken.js";
 
-const Main = () => {
+const Main = ( {socket} ) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isDashboard =
@@ -59,7 +59,7 @@ const Main = () => {
             path="/dashboard/channels/:id"
             element={
               <ProtectedRoute>
-                <Channel />
+                <Channel socket={socket} />
               </ProtectedRoute>
             }
           />

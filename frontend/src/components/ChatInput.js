@@ -5,7 +5,7 @@ import { IoSend } from "react-icons/io5";
 import decodeToken from '../decodeToken';
 
 
-const ChatInput = ({ token, chatRef, channelID, channelName, addMessage}) => {
+const ChatInput = ({ socket, token, chatRef, channelID, channelName, addMessage}) => {
     
     const [input, setInput] = useState('');
 
@@ -34,6 +34,12 @@ const ChatInput = ({ token, chatRef, channelID, channelName, addMessage}) => {
             );
 
             console.log(response.data);
+
+            socket.emit('message', {
+                text: input,
+                user: userId,
+            });
+
             addMessage({
                 text: input,
                 user: userId,
