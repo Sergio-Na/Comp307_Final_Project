@@ -40,10 +40,10 @@ const ChatInput = ({ socket, token, chatRef, channelID, channelName, addMessage}
                 user: userId,
             });
 
-            addMessage({
-                text: input,
-                user: userId,
-            })
+            // addMessage({
+            //     text: input,
+            //     user: userId,
+            // })
         } catch (error) {
             // Update the error state with the error message
             console.error(error);

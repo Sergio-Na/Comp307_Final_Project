@@ -263,15 +263,7 @@ const Channel = ( {socket} ) => {
     
     useEffect(() => {
         socket.on('messageResponse', (data) => {
-            const date = new Date();
-            const now = date.toISOString();
-
-            setChannelMessages([...channelMessages, {
-                text: data.text,
-                user: data.user,
-                _id: Math.random() * 300,
-                timestamp: now
-            }])
+            addMessage(data);
         });
     }, [socket, channelMessages]);
     
