@@ -24,7 +24,7 @@ app.use("/api", channelRoutes);
 // Routes
 // app.use(require("./routes/Channels"));
 socketIO.on('connection', (socket) => {
-  console.log(`⚡: ${socket.id} user just connected!`);
+  console.log(`${socket.id} user just connected!`);
 
   //Listens and logs the message to the console
   socket.on('message', (data) => {
@@ -32,7 +32,7 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('🔥: A user disconnected');
+    console.log('A user disconnected');
   });
 });
 
