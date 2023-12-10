@@ -6,7 +6,9 @@ import {
 	BrowserRouter as Router,
 } from "react-router-dom";
 import styled from 'styled-components'
+import socketIO from 'socket.io-client';
 
+const socket = socketIO.connect('http://localhost:5000');
 
 function App() {
   return (
