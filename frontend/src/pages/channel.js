@@ -178,7 +178,7 @@ const Channel = ( {socket} ) => {
         setChannelMessages([...channelMessages, {
             text: message.text,
             user: message.user,
-            _id: 0,
+            _id: Math.random() * 300,
             timestamp: now
         }])
     }
@@ -265,10 +265,12 @@ const Channel = ( {socket} ) => {
         socket.on('messageResponse', (data) => {
             const date = new Date();
             const now = date.toISOString();
+            console.log(channelMessages);
+
             setChannelMessages([...channelMessages, {
                 text: data.text,
                 user: data.user,
-                _id: 0,
+                _id: Math.random() * 300,
                 timestamp: now
             }])
         });
