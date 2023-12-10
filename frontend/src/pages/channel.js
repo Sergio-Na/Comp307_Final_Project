@@ -15,7 +15,7 @@ import ContextMenu from '../components/ContextMenu';
 
 
 
-const Channel = () => {
+const Channel = ( {socket} ) => {
 
     const [contextMenu, setContextMenu] = useState({
         mouseX: null,
@@ -178,7 +178,7 @@ const Channel = () => {
         setChannelMessages([...channelMessages, {
             text: message.text,
             user: message.user,
-            _id: 0,
+            _id: Math.random() * 300,
             timestamp: now
         }])
     }
@@ -261,7 +261,11 @@ const Channel = () => {
         setContextMenu({ mouseX: null, mouseY: null, userEmail: null });
     };
     
-    
+    useEffect(() => {
+        socket.on('messageResponse', (data) => {
+            addMessage(data);
+        });
+    }, [socket, channelMessages]);
     
 
     useLayoutEffect(() => {
@@ -350,6 +354,7 @@ const Channel = () => {
                         </ChatMessages>
                 
                 <ChatInput
+                    socket= {socket}
                     token = {token}
                     chatRef = {chatRef}
                     channelID={channelID}
