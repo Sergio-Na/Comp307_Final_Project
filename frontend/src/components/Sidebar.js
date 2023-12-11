@@ -48,11 +48,13 @@ const Sidebar = ({isVisible}) => {
                     setLoading(false);
                 }, 1000)
                 
+                
             })
             .catch(error => {
                 console.error('Error fetching user profile', error);
                 setLoading(false);
             });
+
     }, [])
 
 
@@ -467,7 +469,7 @@ const Channels = styled.div`
 `
 
 const ChannelsContainer = styled.div`
-    
+    height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -480,7 +482,7 @@ const ChannelsContainer = styled.div`
         flex-wrap: wrap;
         gap: 20px;
         width: 100%;
-        justify-content: center;
+        justify-content: space-between;
         margin-left: 0;
         padding-bottom: 0;
     }
