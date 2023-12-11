@@ -32,7 +32,7 @@ const Navbar = ({toggleSidebar}) => {
             </NavSection>
             <NavSection>
                 
-                {isDashboardOrProfile &&
+                {isDashboardOrProfile && window.innerWidth >=500 &&
                     <Links>
                         <NavLink to="/">
                             <Button>
@@ -54,18 +54,10 @@ const Navbar = ({toggleSidebar}) => {
             </NavSection>
             
             {!loggedIn ? 
-                <NavSection className="right">
-                    <NavLink to="/signup">
-                        <Button>
-                            Sign Up
-                        </Button>
-                    </NavLink>
-                    <NavLink to="/signin">
-                        <Button>
-                            Sign In
-                        </Button>
-                    </NavLink>
-                </NavSection>
+                <BurgerMenu>
+                    <CiMenuBurger size={26} onClick={toggleSidebar}/>
+                </BurgerMenu>
+                
                 :
                 <>
                 <NavSection className="right">

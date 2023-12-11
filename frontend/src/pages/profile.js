@@ -438,6 +438,12 @@ const ProfileContainer = styled.div`
   background-color: #f8f8f8;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 500px) {
+    margin: 0;
+    margin-top: 20px;
+    padding: 20px;
+  }
 `;
 
 const Img = styled.img`

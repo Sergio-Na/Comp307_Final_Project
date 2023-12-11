@@ -21,9 +21,9 @@ const Sidebar = ({isVisible}) => {
 
     const location = useLocation();
     const pathName = location.pathname;
-
+    
     const token = window.localStorage.getItem('token')
-    const userId = decodeToken(token).userId
+    const userId = decodeToken(token)?.userId
 
     const [channels, setChannels] = useState([])
     const [loading, setLoading] = useState(true)
@@ -35,8 +35,8 @@ const Sidebar = ({isVisible}) => {
       };
 
     useEffect(() => {
-        
-          axiosInstance.get(`/user-channels/${userId}`, config)
+        if(userId){
+            axiosInstance.get(`/user-channels/${userId}`, config)
             .then(response => {
                 if (Array.isArray(response.data.channels)) {
                     setChannels(response.data.channels);
@@ -54,8 +54,10 @@ const Sidebar = ({isVisible}) => {
                 console.error('Error fetching user profile', error);
                 setLoading(false);
             });
+        }
+          
 
-    }, [])
+    }, [userId])
 
 
     const isProfile = location.pathname === '/profile'

@@ -1,7 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
+
+
 
 const Home = () => {
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      navigate('/signup', { state: { email: email } });
+  };
   // Landing Page
   return (
     <Container>
@@ -13,12 +23,17 @@ const Home = () => {
             Collaborate and Communicate{" "}
           </SubHeading>
           <CTA>
-            <Form>
-              <Label htmlFor="email">
-                <Input type="email" placeholder="Email address" />
-                <Button>GET STARTED</Button>
-              </Label>
-            </Form>
+            <Form onSubmit={handleSubmit}>
+            <Label htmlFor="email">
+              <Input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button type="submit">GET STARTED</Button>
+            </Label>
+          </Form>
           </CTA>
         </TextSection>
       </Hero>
