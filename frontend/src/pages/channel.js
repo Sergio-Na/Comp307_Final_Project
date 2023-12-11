@@ -12,6 +12,7 @@ import AlertMessage from '../components/AlertMessage';
 import decodeToken from '../decodeToken';
 import Modal from '../components/Modal';
 import ContextMenu from '../components/ContextMenu';
+import SearchMessage from '../components/SearchMessage';
 
 
 
@@ -24,11 +25,8 @@ const Channel = ( {socket} ) => {
     });
     
     
-
     const clearSuccessMessage = () => setSuccessMessage("");
     const clearErrorMessage = () => setErrorMessage("");
-
-
 
     const channelID = useParams().id; 
     const token = window.localStorage.getItem('token')
@@ -50,15 +48,12 @@ const Channel = ( {socket} ) => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-
-
+    
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
-
-
-
 
     const [editChannelName, setEditChannelName] = useState("");
     const [editChannelPicture, setEditChannelPicture] = useState("");
+
 
     const handleRightClickOnUser = (event, userEmail) => {
         event.preventDefault();
@@ -323,12 +318,10 @@ const Channel = ( {socket} ) => {
                     <>
                         <Header>
                             <HeaderLeft>
+                                <SearchMessage/>
                                 <h4><strong># {channelName}</strong></h4>
                             </HeaderLeft>
 
-                            {/* <HeaderRight>
-                                <p><BsInfoCircle/> Details</p>
-                            </HeaderRight> */}
                             {isCurrentUserAdmin && (
                             <EditButton onClick={handleEditChannel}>
                                 Edit
@@ -679,22 +672,15 @@ const Header = styled.div`
 `;
 
 const HeaderLeft = styled.div`
-    display: flex;
+    width: 100%;
+    display: flex-block;
     >h4 {
         display: flex;
     }
 `;
 
-const HeaderRight= styled.div`
-    > p {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-    }
-`;
-
 const ChatMessages = styled.div`
     //  margin-bottom: 53px
-    flex-grow: 1; // Allow this component to grow and fill the space
-    overflow-y: auto; // If messages overflow, they can be scrolled
+    flex-grow: 1; 
+    overflow-y: auto;
 `;
