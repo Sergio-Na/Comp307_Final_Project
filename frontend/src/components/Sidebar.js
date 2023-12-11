@@ -153,28 +153,33 @@ const Sidebar = ({isVisible}) => {
 
         {!loggedIn ? 
                 <NavSection className="right">
-                    <NavLink to="/signup">
-                        <Button>
+                    <StyledNavLink to="/signup">
+                        <Button className="nav">
                             Sign Up
                         </Button>
-                    </NavLink>
-                    <NavLink to="/signin">
-                        <Button>
+                    </StyledNavLink>
+                    <StyledNavLink to="/signin">
+                        <Button className="nav">
                             Sign In
                         </Button>
-                    </NavLink>
+                    </StyledNavLink>
                 </NavSection>
                 :
 
                 <NavSection className="right">
-                    <Button onClick={() => handleSignOut()}>
+                    <Button onClick={() => handleSignOut()} className="nav">
                         Sign out
                     </Button>
-                    <NavLink to="/dashboard">
-                            <Button>
-                                Dashboard
-                            </Button>
-                    </NavLink>
+                    <StyledNavLink to="/dashboard">
+                        <Button className="nav">
+                            Dashboard
+                        </Button>
+                    </StyledNavLink>
+                    <StyledNavLink to="/about">
+                        <Button className="nav">
+                            About
+                        </Button>
+                    </StyledNavLink>
                     
                 </NavSection>
 
@@ -261,6 +266,23 @@ const Sidebar = ({isVisible}) => {
     </Container>
   )
 }
+
+const StyledNavLink = styled(NavLink)`
+  text-decoration: none;
+  color: white; // Default color
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  width: 200px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &.active {
+    background-color: var(--main-bg-color); // Active link color
+    color: var(--main-accent-color);
+  }
+`;
 
 
 
@@ -379,6 +401,10 @@ const Button = styled.button`
         transform: scale(1.05)
     }
 
+    &.nav{
+        width: 200px;
+    }
+
 `
 
 const ChannelCreationForm = styled.form`
@@ -455,6 +481,7 @@ const BottomSidebar = styled.div`
 const Channels = styled.div`
     display: flex;
     flex-direction: column;
+    align-content: space-around;
     padding-right: ${props => props.$isprofile ? '30px': '0'};;
     gap: 20px;
 

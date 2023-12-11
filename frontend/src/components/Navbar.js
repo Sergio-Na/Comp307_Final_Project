@@ -32,7 +32,7 @@ const Navbar = ({toggleSidebar}) => {
             </NavSection>
             <NavSection>
                 
-                {/* {isDashboardOrProfile &&
+                {isDashboardOrProfile &&
                     <Links>
                         <NavLink to="/">
                             <Button>
@@ -48,7 +48,7 @@ const Navbar = ({toggleSidebar}) => {
                         </NavLink>
 
                     </Links>
-                } */}
+                }
                     
                 
             </NavSection>
