@@ -205,7 +205,10 @@ const UserInfo = styled.div`
   text-overflow: ellipsis;
 
   > p {
-    margin-left: 6px;
+    margin-left: 9px;
+    padding-left: 9px;
     display: inline-block;
+    border-left
+    : 0.5px solid lightgray;
   }
 `;
