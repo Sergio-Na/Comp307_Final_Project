@@ -4,7 +4,7 @@ import axiosInstance from '../axiosConfig'
 import { CgProfile } from "react-icons/cg";
 
 
-const Message = ({ text, userId, timestamp }) => {
+const Message = ({ text, userId, timestamp, isHighlighted }) => {
 
 
     const [user, setUser] = useState({})
@@ -55,7 +55,7 @@ const Message = ({ text, userId, timestamp }) => {
     
 
     return (
-        <MessageContainer>
+        <MessageContainer isHighlighted={isHighlighted}>
             {isLoading ? (
                 <SkeletonLoader />
             ) : (
@@ -132,6 +132,17 @@ const MessageContainer = styled.div`
         width: 50px;
         border-radius: 8px;
     }
+
+    ${(props) =>
+        props.isHighlighted &&
+        `
+          background-color: #ebceed;
+          border: 2px solid #84468d; 
+          border-radius: 8px;
+    `}
+
+    transition: background-color 1s ease, border 1s ease, border-radius 1s ease;
+    
 `;
 
 const MessageInfo = styled.div`

@@ -4,7 +4,7 @@ import { FiSearch } from 'react-icons/fi'; // Import the search icon
 
 
 
-const SearchMessage = ( { users, channelMessages, channelName} ) => {
+const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighlightedMessage} ) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [channelUsers, setChannelUsers] = useState({});
@@ -16,14 +16,28 @@ const SearchMessage = ( { users, channelMessages, channelName} ) => {
         for (let user of users) {
             usersMap[user.id] = `${user.firstName} ${user.lastName}`;
         }
-        console.log(usersMap);
         setChannelUsers(usersMap);
     }, []);
 
     
     const handleSelectResult = (result) => {
-        // Handle the selected result (e.g., navigate to the message or perform an action)
-        console.log('Selected result:', result);
+        if (chatRef.current) {
+            const messageElement = chatRef.current.querySelector(`[message-id="${result._id}"]`);
+            
+            if (messageElement) {
+              messageElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              });
+            }
+
+            setHighlightedMessage(result._id);
+            // Clear the highlight after 5 seconds
+            setTimeout(() => {
+                setHighlightedMessage(null);
+            }, 10000);
+
+        }
         // Clear search results after selecting a result
         setFilteredMessages([]);
     };
@@ -77,11 +91,11 @@ const SearchMessage = ( { users, channelMessages, channelName} ) => {
             
             <ResultsBox style={{ 
                 opacity: !(filteredMessages.length > 0) ? "0" : "1",
-                transition: "all .5s",
+                transition: "all .s",
                 visibility: !(filteredMessages.length > 0) ? "hidden" : "visible",
             }}>
                 {filteredMessages.map((result) => (
-                    <ResultItem key={result.id} onClick={() => handleSelectResult(result)}>
+                    <ResultItem key={result._id} onClick={() => handleSelectResult(result)}>
                         <UserInfo>
                             <strong>
                                 @{result.user in channelUsers ? channelUsers[result.user] : <i>User Deleted</i>}
@@ -116,11 +130,11 @@ const SearchBar = styled.div`
 const SearchInput = styled.input`
   flex-grow: 1; 
   padding: 4px;
-  border: 1px solid #84468d; // White outline
+  border: 1px solid #84468d;
   border-radius: 4px;
   outline: none; 
   background-color: transparent; 
-  color: #84468d; // Text color
+  color: #84468d;
   transition: border-color 0.3s ease; 
   transition: background-color 0.4s ease; 
 

@@ -54,6 +54,7 @@ const Channel = ( {socket} ) => {
     const [editChannelName, setEditChannelName] = useState("");
     const [editChannelPicture, setEditChannelPicture] = useState("");
 
+    const [highlightedMessage, setHighlightedMessage] = useState(null);
 
     const handleRightClickOnUser = (event, userEmail) => {
         event.preventDefault();
@@ -269,7 +270,7 @@ const Channel = ( {socket} ) => {
                 const chatElement = chatRef.current;
                 chatElement.scrollTop = chatElement.scrollHeight;
             }
-        }, 1000); // Adjust delay as needed
+        }, 5000); // Adjust delay as needed
     }, [channelMessages]);
     
     return (
@@ -318,7 +319,13 @@ const Channel = ( {socket} ) => {
                     <>
                         <Header>
                             <HeaderLeft>
-                                <SearchMessage users={userRoles} channelMessages={channelMessages} channelName={channelName}/>
+                                <SearchMessage 
+                                    users={userRoles} 
+                                    channelMessages={channelMessages} 
+                                    channelName={channelName}
+                                    chatRef={chatRef}
+                                    setHighlightedMessage={setHighlightedMessage}
+                                />
                                 <h4><strong># {channelName}</strong></h4>
                             </HeaderLeft>
 
@@ -334,12 +341,16 @@ const Channel = ( {socket} ) => {
                                 channelMessages.map( msg => {
                                     const { text, user, _id, timestamp } = msg;
                                     return (
-                                        <Message 
-                                            key={_id}
-                                            text={text} 
-                                            userId={user}
-                                            timestamp={new Date(timestamp).toUTCString()}
-                                        />
+                                        <div message-id={_id}>
+                                            <Message 
+                                                key={_id}
+                                                text={text} 
+                                                userId={user}
+                                                timestamp={new Date(timestamp).toUTCString()}
+                                                isHighlighted={_id === highlightedMessage}
+                                            />
+                                        </div>
+                                        
                                     
                                     )
                                 })
