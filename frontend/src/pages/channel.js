@@ -50,7 +50,8 @@ const Channel = ( {socket} ) => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [profileModal, setProfileModal] = useState({isOpen: false, user: null})
+    const [profileModal, setProfileModal] = useState({user: null})
+    const [profileModalOpen, setProfileModalOpen] = useState(false)
 
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
@@ -183,6 +184,9 @@ const Channel = ( {socket} ) => {
     }
 
     const openProfile = (profile) => {
+
+        console.log(profile)
+        
         const token = window.localStorage.getItem('token')
         const config = {
             headers: {
@@ -192,30 +196,29 @@ const Channel = ( {socket} ) => {
     
         axiosInstance.get(`/users/${profile.id}`, config)
         .then(response => {
+            console.log(response)
             setProfileModal( {
-                isOpen: true,
                 user: {
-                    id: response.data.id,
-                    firstName: response.data.firstName,
-                    lastName: response.data.lastName,
-                    profilePicture: response.data.profilePicture,
-                    role: response.data.role,
-                    email: response.data.email
+                    id: response.data.user.id,
+                    firstName: response.data.user.firstName,
+                    lastName: response.data.user.lastName,
+                    profilePicture: response.data.user.profilePicture,
+                    role: response.data.user.role,
+                    email: response.data.user.email,
+                    bio:response.data.user.bio,
                   }
             });
+            setProfileModalOpen(true)
         })
         .catch(error => {
-            
+            console.error(error)
         })
         
         
       };
 
     const closeProfile = () => {
-        setProfileModal({
-            isOpen: false,
-            user: null,
-        });
+        setProfileModalOpen(false)
     };
 
     useEffect(() => {
@@ -441,14 +444,6 @@ const Channel = ( {socket} ) => {
                     <UserRole key={userRole.id} onContextMenu={(e) => handleRightClickOnUser(e, userRole.email)}>
                         <UserImageBox onClick= {() => openProfile(userRole)}>
                             
-                        {profileModal.isOpen && (
-                            <Modal isOpen={profileModal.isOpen} onClose={closeProfile}>
-                                <Img src={profileModal.user.profilePicture}/>
-                                <h2>{profileModal.user.firstName}  {profileModal.user.lastName} </h2>
-                                <h3>Email: {profileModal.user.email}</h3>
-                                <h3>Role: {profileModal.user.role}</h3>
-                            </Modal>
-                        )}
                             {!imageLoadErrors[userRole.id] && userRole.profilePicture ? (
                                 <UserImage 
                                     src={userRole.profilePicture} 
@@ -467,6 +462,18 @@ const Channel = ( {socket} ) => {
                     </UserRole>
                 ))}
             </UsersContainer>
+            {profileModalOpen && (
+                <Modal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)}>
+                    <ProfileModalContent>
+                        <Img src={profileModal.user.profilePicture}/>
+                        <h2>{profileModal.user.firstName}  {profileModal.user.lastName} </h2>
+                        <PII>
+                            <h3>Email: {profileModal.user.email}</h3>
+                            <h3>Bio: {profileModal.user.bio}</h3>
+                        </PII>
+                    </ProfileModalContent>
+                </Modal>
+            )}
         </ChannelContainer>
         
 
@@ -478,6 +485,18 @@ const Channel = ( {socket} ) => {
 
 
 export default Channel
+
+const PII = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+`
+
+const ProfileModalContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const ButtonGroup = styled.div`
     display: flex;

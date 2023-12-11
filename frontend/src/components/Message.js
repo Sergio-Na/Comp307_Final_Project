@@ -26,15 +26,6 @@ const Message = ({ text, userId, timestamp }) => {
         setIsProfileModalOpen(true);
     };
 
-    const ProfileModal = ({ user, onClose }) => (
-        
-        <Modal isOpen={true} onClose={onClose}>
-          <Img src={user.profilePicture}/>
-            <h2>{user.firstName}  {user.lastName} </h2>
-            <h3>Email: {user.email}</h3>
-            <h3>Bio: {user.bio}</h3>
-        </Modal>
-      );
 
 
     const getUserInfo = async (userId) => {
@@ -84,7 +75,7 @@ const Message = ({ text, userId, timestamp }) => {
                     {
                         !imageError ? 
                        
-                        <img src={user.profilePicture} alt="" onError={handleImageError} onClick = {()=> handleImageClick(user)}/> 
+                        <Img src={user.profilePicture} alt="" onError={handleImageError} onClick = {()=> handleImageClick(user)}/> 
                         :
                         <CgProfile size={40} color="#84468D" />
                     }
@@ -100,7 +91,16 @@ const Message = ({ text, userId, timestamp }) => {
                 </>
             )}
             {isProfileModalOpen && (
-            <ProfileModal user={selectedMessageUser} onClose={() => setIsProfileModalOpen(false)} />
+            <Modal isOpen={true} onClose={() => setIsProfileModalOpen(false)}>
+                <ModalContent>
+                    <Img src={user.profilePicture}/>
+                    <h2>{user.firstName}  {user.lastName} </h2>
+                    <PII>
+                        <h3>Email: {user.email}</h3>
+                        <h3>Bio: {user.bio}</h3>
+                    </PII>
+                </ModalContent>
+            </Modal>
             )}
         </MessageContainer>
     );
@@ -108,6 +108,18 @@ const Message = ({ text, userId, timestamp }) => {
 }
 
 export default Message
+
+const PII = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+`
+
+const ModalContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const SkeletonContainer = styled.div`
     display: flex;
@@ -175,6 +187,5 @@ const Img = styled.img`
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--main-bg-color);
-  margin-bottom: 20px;
+  cursor: pointer;
 `;
