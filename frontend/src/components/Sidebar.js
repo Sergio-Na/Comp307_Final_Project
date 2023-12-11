@@ -403,7 +403,6 @@ const Label = styled.label`
 `
 
 const Input = styled.input`
-    min-width: 350px;
     border: 1px solid grey;
     outline: none;
     border-radius: 10px;
