@@ -50,7 +50,7 @@ const Channel = ( {socket} ) => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-
+    const [profileModal, setProfileModal] = useState({isOpen: false, user: null})
 
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
@@ -61,14 +61,17 @@ const Channel = ( {socket} ) => {
     const [editChannelPicture, setEditChannelPicture] = useState("");
 
     const handleRightClickOnUser = (event, userEmail) => {
-        event.preventDefault();
-        if (!isCurrentUserAdmin) return;
+        if (!profileModal) {
+            event.preventDefault();
+            if (!isCurrentUserAdmin) return;
         
-        setContextMenu({
-            mouseX: event.clientX - 2,
-            mouseY: event.clientY - 4,
-            userEmail,
-        });
+            setContextMenu({
+                mouseX: event.clientX - 2,
+                mouseY: event.clientY - 4,
+                userEmail,
+            });
+        }
+        
     };
 
     
@@ -132,10 +135,6 @@ const Channel = ( {socket} ) => {
     };
     
     
-
-
-
-
     // Handler for image load error
     const handleImageError = (id) => {
         setImageLoadErrors(prevState => ({ ...prevState, [id]: true }));
@@ -183,7 +182,41 @@ const Channel = ( {socket} ) => {
         }])
     }
 
+    const openProfile = (profile) => {
+        const token = window.localStorage.getItem('token')
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
     
+        axiosInstance.get(`/users/${profile.id}`, config)
+        .then(response => {
+            setProfileModal( {
+                isOpen: true,
+                user: {
+                    id: response.data.id,
+                    firstName: response.data.firstName,
+                    lastName: response.data.lastName,
+                    profilePicture: response.data.profilePicture,
+                    role: response.data.role,
+                    email: response.data.email
+                  }
+            });
+        })
+        .catch(error => {
+            
+        })
+        
+        
+      };
+
+    const closeProfile = () => {
+        setProfileModal({
+            isOpen: false,
+            user: null,
+        });
+    };
 
     useEffect(() => {
         setIsLoading(true)
@@ -347,6 +380,8 @@ const Channel = ( {socket} ) => {
                                             userId={user}
                                             timestamp={new Date(timestamp).toUTCString()}
                                         />
+                                
+                                        
                                     
                                     )
                                 })
@@ -404,7 +439,16 @@ const Channel = ( {socket} ) => {
                 }
                 {userRoles.map((userRole) => (
                     <UserRole key={userRole.id} onContextMenu={(e) => handleRightClickOnUser(e, userRole.email)}>
-                        <UserImageBox>
+                        <UserImageBox onClick= {() => openProfile(userRole)}>
+                            
+                        {profileModal.isOpen && (
+                            <Modal isOpen={profileModal.isOpen} onClose={closeProfile}>
+                                <Img src={profileModal.user.profilePicture}/>
+                                <h2>{profileModal.user.firstName}  {profileModal.user.lastName} </h2>
+                                <h3>Email: {profileModal.user.email}</h3>
+                                <h3>Role: {profileModal.user.role}</h3>
+                            </Modal>
+                        )}
                             {!imageLoadErrors[userRole.id] && userRole.profilePicture ? (
                                 <UserImage 
                                     src={userRole.profilePicture} 
@@ -697,4 +741,13 @@ const ChatMessages = styled.div`
     //  margin-bottom: 53px
     flex-grow: 1; // Allow this component to grow and fill the space
     overflow-y: auto; // If messages overflow, they can be scrolled
+`;
+
+const Img = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--main-bg-color);
+  margin-bottom: 20px;
 `;

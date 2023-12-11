@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axiosInstance from '../axiosConfig'
 import { CgProfile } from "react-icons/cg";
+import Modal from './Modal';
 
 
 const Message = ({ text, userId, timestamp }) => {
@@ -10,11 +11,30 @@ const Message = ({ text, userId, timestamp }) => {
     const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [selectedMessageUser, setSelectedMessageUser] = useState(null);
+    
 
     const handleImageError = (e) => {
         e.preventDefault()
         setImageError(true)
     }
+
+    const handleImageClick = (user) => {
+        console.log(user);
+        setSelectedMessageUser(user);
+        setIsProfileModalOpen(true);
+    };
+
+    const ProfileModal = ({ user, onClose }) => (
+        
+        <Modal isOpen={true} onClose={onClose}>
+          <Img src={user.profilePicture}/>
+            <h2>{user.firstName}  {user.lastName} </h2>
+            <h3>Email: {user.email}</h3>
+            <h3>Bio: {user.bio}</h3>
+        </Modal>
+      );
 
 
     const getUserInfo = async (userId) => {
@@ -52,8 +72,9 @@ const Message = ({ text, userId, timestamp }) => {
             </div>
         </SkeletonContainer>
     );
-    
-
+   
+  
+   
     return (
         <MessageContainer>
             {isLoading ? (
@@ -62,7 +83,8 @@ const Message = ({ text, userId, timestamp }) => {
                 <>
                     {
                         !imageError ? 
-                        <img src={user.profilePicture} alt="" onError={handleImageError}/>
+                       
+                        <img src={user.profilePicture} alt="" onError={handleImageError} onClick = {()=> handleImageClick(user)}/> 
                         :
                         <CgProfile size={40} color="#84468D" />
                     }
@@ -76,6 +98,9 @@ const Message = ({ text, userId, timestamp }) => {
                         <p>{text}</p>
                     </MessageInfo>
                 </>
+            )}
+            {isProfileModalOpen && (
+            <ProfileModal user={selectedMessageUser} onClose={() => setIsProfileModalOpen(false)} />
             )}
         </MessageContainer>
     );
@@ -143,4 +168,13 @@ const MessageInfo = styled.div`
         margin-left: 4px;
         font-size: 12px;
     }
+`;
+
+const Img = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--main-bg-color);
+  margin-bottom: 20px;
 `;
