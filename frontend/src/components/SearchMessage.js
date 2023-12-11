@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi'; // Import the search icon
+import { CiMinimize1 } from "react-icons/ci";
+
 
 
 
@@ -9,6 +11,7 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [channelUsers, setChannelUsers] = useState({});
     const [isFocused, setIsFocused] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false)
     
 
     useEffect(() => {
@@ -62,7 +65,8 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
         
     };
 
-    const handleSearch = () => {
+    const handleSearch = (e) => {
+        e.preventDefault()
         // Assuming you have a list of all messages in the variable 'allMessages'
         if (searchQuery.length > 0){
             const filteredResults = channelMessages.filter((message) =>
@@ -79,17 +83,24 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
 
     return (
         <>
-            <SearchBar>
+            <SearchBar onSubmit={(e) => handleSearch(e)}>
+            {isExpanded && 
                 <SearchInput
-                    type="text"
-                    placeholder={`Search in #${channelName}`}
-                    value={searchQuery}
-                    onChange={handleInputChange}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                />
-                <SearchButton onClick={handleSearch}>
-                    <FiSearch size={20} />
+                type="text"
+                placeholder={`Search in #${channelName}`}
+                value={searchQuery}
+                onChange={handleInputChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+            />}
+                
+                <SearchButton onClick={() => setIsExpanded(!isExpanded)}>
+                {
+                    isExpanded ? 
+                        <CiMinimize1 size={26} />
+                    :
+                    <FiSearch size={26} />
+                }
                 </SearchButton>
             </SearchBar>
             
@@ -126,18 +137,20 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
 
 export default SearchMessage;
 
-const SearchBar = styled.div`
+const SearchBar = styled.form`
   display: flex;
   align-items: center;
   margin-left: auto; // Push the search bar to the right
   width: 100%; // Make the search bar take the full width of the container
   margin-bottom: 15px;
+  gap: 10px;
+  padding-right: 10px;
   
 `;
 
 const SearchInput = styled.input`
   flex-grow: 1; 
-  padding: 4px;
+  padding: 8px;
   border: 1px solid #84468d;
   border-radius: 4px;
   outline: none; 
@@ -154,9 +167,12 @@ const SearchInput = styled.input`
 `;
 
 const SearchButton = styled.button`
+display: flex;
+align-items: center;
+justify-content: center;
   background-color: #84468d;
   color: white;
-  padding: 4px;
+  padding: 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
