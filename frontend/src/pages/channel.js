@@ -318,7 +318,7 @@ const Channel = ( {socket} ) => {
                     <>
                         <Header>
                             <HeaderLeft>
-                                <SearchMessage/>
+                                <SearchMessage users={userRoles} channelMessages={channelMessages} channelName={channelName}/>
                                 <h4><strong># {channelName}</strong></h4>
                             </HeaderLeft>
 

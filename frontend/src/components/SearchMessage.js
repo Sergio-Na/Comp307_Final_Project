@@ -1,39 +1,103 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi'; // Import the search icon
 
 
 
-const SearchMessage = ( {channelMessages} ) => {
+const SearchMessage = ( { users, channelMessages, channelName} ) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredMessages, setFilteredMessages] = useState([]);
+    const [channelUsers, setChannelUsers] = useState({});
+    
 
-    const handleSearch = (channelMessages) => {
-        if (!searchQuery) {
-          setFilteredMessages([]);
-          return;
+    useEffect(() => {
+        let usersMap = {};
+
+        for (let user of users) {
+            usersMap[user.id] = `${user.firstName} ${user.lastName}`;
         }
+        console.log(usersMap);
+        setChannelUsers(usersMap);
+    }, []);
+
+    
+    const handleSelectResult = (result) => {
+        // Handle the selected result (e.g., navigate to the message or perform an action)
+        console.log('Selected result:', result);
+        // Clear search results after selecting a result
+        setFilteredMessages([]);
+    };
+
+    const handleInputChange = (e) => {
+        const newQuery = e.target.value;
+        setSearchQuery(newQuery);
       
-        const lowerCaseQuery = searchQuery.toLowerCase();
-        const filtered = channelMessages.filter((message) =>
-          message.text.toLowerCase().includes(lowerCaseQuery)
-        );
+        // Assuming you have a list of all messages in the variable 'allMessages'
+        if (newQuery.length > 0){
+            const filteredResults = channelMessages.filter((message) =>
+                message.text.toLowerCase().includes(newQuery.toLowerCase())
+            );
       
-        setFilteredMessages(filtered);
-    }; 
+            setFilteredMessages(filteredResults);
+        }
+        else {
+            setFilteredMessages([]);
+        }
+        
+    };
+
+    const handleSearch = () => {
+        // Assuming you have a list of all messages in the variable 'allMessages'
+        if (searchQuery.length > 0){
+            const filteredResults = channelMessages.filter((message) =>
+                message.text.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+      
+            setFilteredMessages(filteredResults);
+        }
+        else {
+            setFilteredMessages([]);
+        }       
+    };
+        
 
     return (
-        <SearchBar>
-            <SearchInput
-                type="text"
-                placeholder="Search messages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <SearchButton onClick={handleSearch}>
-                <FiSearch size={20} />
-            </SearchButton>
-        </SearchBar>
+        <>
+            <SearchBar>
+                <SearchInput
+                    type="text"
+                    placeholder={`Search in #${channelName}`}
+                    value={searchQuery}
+                    onChange={handleInputChange}
+                />
+                <SearchButton onClick={handleSearch}>
+                    <FiSearch size={20} />
+                </SearchButton>
+            </SearchBar>
+            
+            <ResultsBox style={{ 
+                opacity: !(filteredMessages.length > 0) ? "0" : "1",
+                transition: "all .5s",
+                visibility: !(filteredMessages.length > 0) ? "hidden" : "visible",
+            }}>
+                {filteredMessages.map((result) => (
+                    <ResultItem key={result.id} onClick={() => handleSelectResult(result)}>
+                        <UserInfo>
+                            <strong>
+                                @{result.user in channelUsers ? channelUsers[result.user] : <i>User Deleted</i>}
+                            </strong> 
+                            <p>{result.text}</p>
+                        </UserInfo>
+                        
+                        <span style={{ float: 'right'}}>
+                            {new Date(result.timestamp).toDateString()}
+                        </span>
+                    </ResultItem>
+                ))}
+            </ResultsBox>
+            
+        </>
+        
     )
 }
 
@@ -46,6 +110,7 @@ const SearchBar = styled.div`
   margin-left: auto; // Push the search bar to the right
   width: 100%; // Make the search bar take the full width of the container
   margin-bottom: 15px;
+  
 `;
 
 const SearchInput = styled.input`
@@ -76,5 +141,49 @@ const SearchButton = styled.button`
 
   &:hover {
     background-color: #763d7a;
+  }
+`;
+
+const ResultsBox = styled.div`
+  position: relative;
+  top: -15px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 4px;
+  z-index: 1;
+`;
+
+const ResultItem = styled.div`
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  > span {
+        float: right;
+        color: gray;
+        font-weight: 300;
+        margin-left: 4px;
+        font-size: 12px;
+  }
+`;
+
+const UserInfo = styled.div`
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  > p {
+    margin-left: 6px;
+    display: inline-block;
   }
 `;
