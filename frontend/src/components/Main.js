@@ -21,7 +21,8 @@ const Main = ( {socket, isSidebarVisible, setIsSidebarVisible} ) => {
   const navigate = useNavigate();
   const isDashboard =
     location.pathname.includes("/dashboard") ||
-    location.pathname === "/profile";
+    location.pathname === "/profile" ||
+    window.innerWidth <= 500
 
 
     useEffect(() => {
@@ -109,7 +110,13 @@ const Content = styled.div`
 
   @media (max-width: 800px) {
         padding: 10px 10px;
+        
     }
+
+  @media (max-width: 500px){
+    border-radius: 10px;
+    margin: 5px;
+  }
 `;
 
 export default Main;
