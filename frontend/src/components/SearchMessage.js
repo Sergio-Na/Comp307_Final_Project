@@ -31,7 +31,7 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
             if (messageElement) {
               messageElement.scrollIntoView({
                 behavior: 'smooth',
-                block: 'start',
+                block: 'end',
               });
             }
 

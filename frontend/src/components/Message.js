@@ -67,7 +67,7 @@ const Message = ({ text, userId, timestamp, isHighlighted }) => {
   
    
     return (
-        <MessageContainer isHighlighted={isHighlighted}>
+        <MessageContainer $isHighlighted={isHighlighted}>
             {isLoading ? (
                 <SkeletonLoader />
             ) : (
@@ -171,7 +171,7 @@ const MessageContainer = styled.div`
     }
 
     ${(props) =>
-        props.isHighlighted &&
+        props.$isHighlighted &&
         `
           background-color: #ebceed;
           border: 2px solid #84468d; 
