@@ -29,7 +29,7 @@ const Sidebar = () => {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      };
+    };
 
     useEffect(() => {
         

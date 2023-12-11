@@ -254,6 +254,7 @@ router.get("/user-channels/:userId", authenticate, async (req, res) => {
       id: channel._id,
       name: channel.name,
       picture: channel.picture,
+      messages: channel.messages,
       // Add any other important info you need about the channels here
     }));
 
