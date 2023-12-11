@@ -141,7 +141,7 @@ const MessageContainer = styled.div`
           border-radius: 8px;
     `}
 
-    transition: background-color 1s ease, border 1s ease, border-radius 1s ease;
+    transition: background-color 0.6s ease, border 0.6s ease, border-radius 0.6s ease;
     
 `;
 

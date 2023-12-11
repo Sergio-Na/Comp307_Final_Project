@@ -8,6 +8,7 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [channelUsers, setChannelUsers] = useState({});
+    const [isFocused, setIsFocused] = useState(false);
     
 
     useEffect(() => {
@@ -39,6 +40,7 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
 
         }
         // Clear search results after selecting a result
+        setSearchQuery('');
         setFilteredMessages([]);
     };
 
@@ -83,33 +85,39 @@ const SearchMessage = ( { users, channelMessages, channelName, chatRef, setHighl
                     placeholder={`Search in #${channelName}`}
                     value={searchQuery}
                     onChange={handleInputChange}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                 />
                 <SearchButton onClick={handleSearch}>
                     <FiSearch size={20} />
                 </SearchButton>
             </SearchBar>
             
-            <ResultsBox style={{ 
-                opacity: !(filteredMessages.length > 0) ? "0" : "1",
-                transition: "all .s",
-                visibility: !(filteredMessages.length > 0) ? "hidden" : "visible",
-            }}>
-                {filteredMessages.map((result) => (
-                    <ResultItem key={result._id} onClick={() => handleSelectResult(result)}>
-                        <UserInfo>
-                            <strong>
-                                @{result.user in channelUsers ? channelUsers[result.user] : <i>User Deleted</i>}
-                            </strong> 
-                            <p>{result.text}</p>
-                        </UserInfo>
-                        
-                        <span style={{ float: 'right'}}>
-                            {new Date(result.timestamp).toDateString()}
-                        </span>
-                    </ResultItem>
-                ))}
-            </ResultsBox>
-            
+            { isFocused &&
+                <ResultsBox style={{ 
+                    opacity: !(filteredMessages.length > 0) ? "0" : "1",
+                    transition: "all .s",
+                    visibility: !(filteredMessages.length > 0) ? "hidden" : "visible",
+                }}>
+                    {filteredMessages.map((result) => (
+                        <ResultItem key={result._id} onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleSelectResult(result);
+                        }}>
+                            <UserInfo>
+                                <strong>
+                                    @{result.user in channelUsers ? channelUsers[result.user] : <i>User Deleted</i>}
+                                </strong> 
+                                <p>{result.text}</p>
+                            </UserInfo>
+                            
+                            <span style={{ float: 'right'}}>
+                                {new Date(result.timestamp).toDateString()}
+                            </span>
+                        </ResultItem>
+                    ))}
+                </ResultsBox>
+}
         </>
         
     )
