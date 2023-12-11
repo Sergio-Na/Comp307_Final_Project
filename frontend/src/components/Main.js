@@ -92,6 +92,10 @@ const Content = styled.div`
     color: black;
   }
   background-color: #eeeeee;
+
+  @media (max-width: 800px) {
+        padding: 10px 10px;
+    }
 `;
 
 export default Main;

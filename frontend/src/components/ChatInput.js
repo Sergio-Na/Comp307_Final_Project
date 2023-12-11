@@ -90,6 +90,10 @@ const InputContainer = styled.div`
         border-radius: 3px;
         padding: 20px;
         outline: none;
+
+        @media (max-width: 800px) {
+        width: 95%;
+    }
     }
 `;
 
@@ -112,5 +116,9 @@ const SendButton = styled.button`
 
     svg {
         color: #333; // default color of icon
+    }
+
+    @media (max-width: 800px) {
+        right: 25px;
     }
 `;

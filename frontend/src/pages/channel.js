@@ -608,6 +608,10 @@ const ChannelContainer = styled.div`
     display: flex;
     gap: 10px;
     height: 100%; // Make sure the container takes full height if needed
+
+    @media (max-width: 800px) {
+        flex-direction: column;
+    }
 `;
 
 const EditButton = styled.button`
@@ -666,6 +670,8 @@ const UserRole = styled.div`
         cursor: pointer;
         background-color: var(--main-accent-color)
     }
+
+    
 
 `
 
@@ -733,6 +739,9 @@ const UsersContainer = styled.div`
     padding: 10px 0px 10px 10px;
     border-left: 1px solid lightgray;
     overflow-y: auto; // Enable scrolling if the content overflows
+    @media (max-width: 800px) {
+        border-left: none;
+    }
 `;
 
 

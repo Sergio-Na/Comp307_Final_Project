@@ -30,7 +30,7 @@ const Navbar = () => {
             </NavSection>
             <NavSection>
                 
-                {isDashboardOrProfile &&
+                {/* {isDashboardOrProfile &&
                     <Links>
                         <NavLink to="/">
                             <Button>
@@ -46,7 +46,7 @@ const Navbar = () => {
                         </NavLink>
 
                     </Links>
-                }
+                } */}
                     
                 
             </NavSection>
