@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axiosInstance from '../axiosConfig'
 import { CgProfile } from "react-icons/cg";
+import Modal from './Modal';
 
 
 const Message = ({ text, userId, timestamp, isHighlighted }) => {
@@ -10,11 +11,21 @@ const Message = ({ text, userId, timestamp, isHighlighted }) => {
     const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true);
     const [imageError, setImageError] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [selectedMessageUser, setSelectedMessageUser] = useState(null);
+    
 
     const handleImageError = (e) => {
         e.preventDefault()
         setImageError(true)
     }
+
+    const handleImageClick = (user) => {
+        console.log(user);
+        setSelectedMessageUser(user);
+        setIsProfileModalOpen(true);
+    };
+
 
 
     const getUserInfo = async (userId) => {
@@ -52,8 +63,9 @@ const Message = ({ text, userId, timestamp, isHighlighted }) => {
             </div>
         </SkeletonContainer>
     );
-    
-
+   
+  
+   
     return (
         <MessageContainer isHighlighted={isHighlighted}>
             {isLoading ? (
@@ -62,7 +74,8 @@ const Message = ({ text, userId, timestamp, isHighlighted }) => {
                 <>
                     {
                         !imageError ? 
-                        <img src={user.profilePicture} alt="" onError={handleImageError}/>
+                       
+                        <Img src={user.profilePicture} alt="" onError={handleImageError} onClick = {()=> handleImageClick(user)}/> 
                         :
                         <CgProfile size={40} color="#84468D" />
                     }
@@ -77,12 +90,36 @@ const Message = ({ text, userId, timestamp, isHighlighted }) => {
                     </MessageInfo>
                 </>
             )}
+            {isProfileModalOpen && (
+            <Modal isOpen={true} onClose={() => setIsProfileModalOpen(false)}>
+                <ModalContent>
+                    <Img src={user.profilePicture}/>
+                    <h2>{user.firstName}  {user.lastName} </h2>
+                    <PII>
+                        <h3>Email: {user.email}</h3>
+                        <h3>Bio: {user.bio}</h3>
+                    </PII>
+                </ModalContent>
+            </Modal>
+            )}
         </MessageContainer>
     );
     
 }
 
 export default Message
+
+const PII = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+`
+
+const ModalContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const SkeletonContainer = styled.div`
     display: flex;
@@ -154,4 +191,12 @@ const MessageInfo = styled.div`
         margin-left: 4px;
         font-size: 12px;
     }
+`;
+
+const Img = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
 `;

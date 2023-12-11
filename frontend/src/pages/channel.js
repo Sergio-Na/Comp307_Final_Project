@@ -48,7 +48,9 @@ const Channel = ( {socket} ) => {
     const [isAddingUser, setIsAddingUser] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    
+    const [profileModal, setProfileModal] = useState({user: null})
+    const [profileModalOpen, setProfileModalOpen] = useState(false)
+
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
     const [editChannelName, setEditChannelName] = useState("");
@@ -57,14 +59,17 @@ const Channel = ( {socket} ) => {
     const [highlightedMessage, setHighlightedMessage] = useState(null);
 
     const handleRightClickOnUser = (event, userEmail) => {
-        event.preventDefault();
-        if (!isCurrentUserAdmin) return;
+        if (!profileModal) {
+            event.preventDefault();
+            if (!isCurrentUserAdmin) return;
         
-        setContextMenu({
-            mouseX: event.clientX - 2,
-            mouseY: event.clientY - 4,
-            userEmail,
-        });
+            setContextMenu({
+                mouseX: event.clientX - 2,
+                mouseY: event.clientY - 4,
+                userEmail,
+            });
+        }
+        
     };
 
     
@@ -128,10 +133,6 @@ const Channel = ( {socket} ) => {
     };
     
     
-
-
-
-
     // Handler for image load error
     const handleImageError = (id) => {
         setImageLoadErrors(prevState => ({ ...prevState, [id]: true }));
@@ -179,7 +180,43 @@ const Channel = ( {socket} ) => {
         }])
     }
 
+    const openProfile = (profile) => {
+
+        console.log(profile)
+        
+        const token = window.localStorage.getItem('token')
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
     
+        axiosInstance.get(`/users/${profile.id}`, config)
+        .then(response => {
+            console.log(response)
+            setProfileModal( {
+                user: {
+                    id: response.data.user.id,
+                    firstName: response.data.user.firstName,
+                    lastName: response.data.user.lastName,
+                    profilePicture: response.data.user.profilePicture,
+                    role: response.data.user.role,
+                    email: response.data.user.email,
+                    bio:response.data.user.bio,
+                  }
+            });
+            setProfileModalOpen(true)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+        
+        
+      };
+
+    const closeProfile = () => {
+        setProfileModalOpen(false)
+    };
 
     useEffect(() => {
         setIsLoading(true)
@@ -408,7 +445,8 @@ const Channel = ( {socket} ) => {
                 }
                 {userRoles.map((userRole) => (
                     <UserRole key={userRole.id} onContextMenu={(e) => handleRightClickOnUser(e, userRole.email)}>
-                        <UserImageBox>
+                        <UserImageBox onClick= {() => openProfile(userRole)}>
+                            
                             {!imageLoadErrors[userRole.id] && userRole.profilePicture ? (
                                 <UserImage 
                                     src={userRole.profilePicture} 
@@ -427,6 +465,18 @@ const Channel = ( {socket} ) => {
                     </UserRole>
                 ))}
             </UsersContainer>
+            {profileModalOpen && (
+                <Modal isOpen={profileModalOpen} onClose={() => setProfileModalOpen(false)}>
+                    <ProfileModalContent>
+                        <Img src={profileModal.user.profilePicture}/>
+                        <h2>{profileModal.user.firstName}  {profileModal.user.lastName} </h2>
+                        <PII>
+                            <h3>Email: {profileModal.user.email}</h3>
+                            <h3>Bio: {profileModal.user.bio}</h3>
+                        </PII>
+                    </ProfileModalContent>
+                </Modal>
+            )}
         </ChannelContainer>
         
 
@@ -438,6 +488,18 @@ const Channel = ( {socket} ) => {
 
 
 export default Channel
+
+const PII = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+`
+
+const ProfileModalContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const ButtonGroup = styled.div`
     display: flex;
@@ -694,4 +756,13 @@ const ChatMessages = styled.div`
     //  margin-bottom: 53px
     flex-grow: 1; 
     overflow-y: auto;
+`;
+
+const Img = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--main-bg-color);
+  margin-bottom: 20px;
 `;
