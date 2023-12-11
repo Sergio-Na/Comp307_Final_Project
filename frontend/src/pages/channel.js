@@ -12,6 +12,7 @@ import AlertMessage from '../components/AlertMessage';
 import decodeToken from '../decodeToken';
 import Modal from '../components/Modal';
 import ContextMenu from '../components/ContextMenu';
+import SearchMessage from '../components/SearchMessage';
 
 
 
@@ -24,11 +25,8 @@ const Channel = ( {socket} ) => {
     });
     
     
-
     const clearSuccessMessage = () => setSuccessMessage("");
     const clearErrorMessage = () => setErrorMessage("");
-
-
 
     const channelID = useParams().id; 
     const token = window.localStorage.getItem('token')
@@ -55,11 +53,10 @@ const Channel = ( {socket} ) => {
 
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
-
-
-
     const [editChannelName, setEditChannelName] = useState("");
     const [editChannelPicture, setEditChannelPicture] = useState("");
+
+    const [highlightedMessage, setHighlightedMessage] = useState(null);
 
     const handleRightClickOnUser = (event, userEmail) => {
         if (!profileModal) {
@@ -310,7 +307,7 @@ const Channel = ( {socket} ) => {
                 const chatElement = chatRef.current;
                 chatElement.scrollTop = chatElement.scrollHeight;
             }
-        }, 1000); // Adjust delay as needed
+        }, 5000); // Adjust delay as needed
     }, [channelMessages]);
     
     return (
@@ -359,12 +356,16 @@ const Channel = ( {socket} ) => {
                     <>
                         <Header>
                             <HeaderLeft>
+                                <SearchMessage 
+                                    users={userRoles} 
+                                    channelMessages={channelMessages} 
+                                    channelName={channelName}
+                                    chatRef={chatRef}
+                                    setHighlightedMessage={setHighlightedMessage}
+                                />
                                 <h4><strong># {channelName}</strong></h4>
                             </HeaderLeft>
 
-                            {/* <HeaderRight>
-                                <p><BsInfoCircle/> Details</p>
-                            </HeaderRight> */}
                             {isCurrentUserAdmin && (
                             <EditButton onClick={handleEditChannel}>
                                 Edit
@@ -377,13 +378,15 @@ const Channel = ( {socket} ) => {
                                 channelMessages.map( msg => {
                                     const { text, user, _id, timestamp } = msg;
                                     return (
-                                        <Message 
-                                            key={_id}
-                                            text={text} 
-                                            userId={user}
-                                            timestamp={new Date(timestamp).toUTCString()}
-                                        />
-                                
+                                        <div message-id={_id}>
+                                            <Message 
+                                                key={_id}
+                                                text={text} 
+                                                userId={user}
+                                                timestamp={new Date(timestamp).toUTCString()}
+                                                isHighlighted={_id === highlightedMessage}
+                                            />
+                                        </div>
                                         
                                     
                                     )
@@ -742,24 +745,17 @@ const Header = styled.div`
 `;
 
 const HeaderLeft = styled.div`
-    display: flex;
+    width: 100%;
+    display: flex-block;
     >h4 {
         display: flex;
     }
 `;
 
-const HeaderRight= styled.div`
-    > p {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-    }
-`;
-
 const ChatMessages = styled.div`
     //  margin-bottom: 53px
-    flex-grow: 1; // Allow this component to grow and fill the space
-    overflow-y: auto; // If messages overflow, they can be scrolled
+    flex-grow: 1; 
+    overflow-y: auto;
 `;
 
 const Img = styled.img`
