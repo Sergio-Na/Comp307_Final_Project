@@ -3,11 +3,13 @@ import { NavLink } from "react-router-dom";
 import styled from 'styled-components'
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { CiMenuBurger } from "react-icons/ci";
 
 
 
 
-const Navbar = () => {
+
+const Navbar = ({toggleSidebar}) => {
 
     const navigate = useNavigate()
 
@@ -52,7 +54,7 @@ const Navbar = () => {
             </NavSection>
             
             {!loggedIn ? 
-                <NavSection>
+                <NavSection className="right">
                     <NavLink to="/signup">
                         <Button>
                             Sign Up
@@ -65,7 +67,8 @@ const Navbar = () => {
                     </NavLink>
                 </NavSection>
                 :
-                <NavSection>
+                <>
+                <NavSection className="right">
                     <Button onClick={() => handleSignOut()}>
                         Sign out
                     </Button>
@@ -74,7 +77,12 @@ const Navbar = () => {
                                 Dashboard
                             </Button>
                     </NavLink>
+                    
                 </NavSection>
+                <BurgerMenu>
+                    <CiMenuBurger size={26} onClick={toggleSidebar}/>
+                </BurgerMenu>
+                </>
 
         }
             
@@ -83,6 +91,16 @@ const Navbar = () => {
 		</Nav>
 	);
 };
+
+const BurgerMenu = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @media (min-width: 501px) {
+        display: none;
+    }
+    
+`
 
 const StyledNavLink = styled(NavLink)`
     display: flex;
@@ -122,8 +140,25 @@ const NavSection = styled.div`
     align-items: center;
     width: max-content;
 
+    @media (min-width: 501px) {
+        &.right {
+            /* Apply the same styles as the main NavSection for larger screens */
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: max-content;
+        }
+    }
 
+    @media (max-width: 500px) {
+        &.right {
+            display: none;
+        }
+    }
 `
+
+
+
 const Links = styled.div`
     display: flex;
     background-color: var(--main-accent-color);

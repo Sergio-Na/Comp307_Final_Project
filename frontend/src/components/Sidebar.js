@@ -8,10 +8,13 @@ import Modal from './Modal';
 import AlertMessage from './AlertMessage';
 import { GiAbstract047 } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
+import { useNavigate } from 'react-router-dom';
 
 
 
-const Sidebar = () => {
+const Sidebar = ({isVisible}) => {
+
+    const navigate = useNavigate()
 
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -131,10 +134,49 @@ const Sidebar = () => {
         }
     };
 
+    const handleSignOut = () => {
+        window.localStorage.removeItem('token')
+        navigate('/signin')
+    }
+
+    const loggedIn = window.localStorage.getItem('token')
+
+    if (!isVisible && window.innerWidth <= 500){
+        return null
+    }
   return (
-    <Container $iscollapsed={isCollapsed}>
+    <Container $iscollapsed={isCollapsed} isVisible={isVisible}>
         <AlertMessage message={successMessage} type="success" clearMessage={setSuccessMessage} />
         <AlertMessage message={errorMessage} type="error" clearMessage={setErrorMessage} />
+
+        {!loggedIn ? 
+                <NavSection className="right">
+                    <NavLink to="/signup">
+                        <Button>
+                            Sign Up
+                        </Button>
+                    </NavLink>
+                    <NavLink to="/signin">
+                        <Button>
+                            Sign In
+                        </Button>
+                    </NavLink>
+                </NavSection>
+                :
+
+                <NavSection className="right">
+                    <Button onClick={() => handleSignOut()}>
+                        Sign out
+                    </Button>
+                    <NavLink to="/dashboard">
+                            <Button>
+                                Dashboard
+                            </Button>
+                    </NavLink>
+                    
+                </NavSection>
+
+        }
 
         <ChannelsContainer>
         {loading ? (
@@ -218,6 +260,24 @@ const Sidebar = () => {
   )
 }
 
+
+
+const NavSection = styled.div`
+    /* display: none; */
+
+    @media (min-width: 500px) {
+        display: none;
+    }
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+`
+
 const ChannelImage = styled.img`
   width: 100%;  // Fill the entire width of the container
   height: 100%; // Fill the entire height of the container
@@ -252,6 +312,10 @@ const ChannelIcon = styled.button`
     z-index: 1000;
     color: white;
     // Additional styles for positioning, size, color, etc.
+
+    @media (max-width: 500px) {
+        display: none;
+    }
   }
 
   &::after {
@@ -275,6 +339,10 @@ const ChannelIcon = styled.button`
     display: block;
     visibility: visible;
     opacity: 1;
+
+    @media (max-width: 500px) {
+        display: none;
+    }
   }
 
   &:hover {
@@ -345,44 +413,41 @@ const Input = styled.input`
 
 const Container = styled.div`
     display: flex;
-    /* gap: 20px; */
-`
-
-const SubChannels = styled.div`
-    display: flex;
-    gap: 10px;
     flex-direction: column;
-    background-color: var(--main-accent-color);
-    margin: 0px 0px 5px 0px;
-    border-radius: 10px 0px 0px 10px;
-    padding: 20px 0px;
-    padding-left: 10px;
+    /* Other styles... */
 
-`
-
-const SubChannelItem = styled.div`
-    display: flex;
-    gap: 10px;
-    min-width: 200px;
-    color: black;
-    padding: 5px 15px;
-    border-radius: 10px;
-    background-color: #ffffff47;
-    margin-right: 20px;
-    transition: all 1s ease;
-
-    &:hover{
-        cursor: pointer;
-        transform: scale(1.05);
-        font-weight: bold;
+    @media (max-width: 500px) {
+        display: ${props => props.isVisible ? 'flex' : 'none'};
+        width: 100vw; // Full viewport width
+        height: 100vh; // Full viewport height
+        position: fixed; // Make it fixed position
+        top: 20;
+        left: 0;
+        z-index: 100; // Ensure it's on top of other elements
+        background-color: var(--main-bg-color);
+        align-items: center;
+        padding-top: 30px;
     }
 
-`
+    @media (min-width: 501px) {
+        display: flex; // Always show sidebar on larger screens
+    }
+`;
+
+
 const BottomSidebar = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding-right: 30px;
+
+    @media (max-width: 500px) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
+    }
 
 `
 
@@ -391,6 +456,14 @@ const Channels = styled.div`
     flex-direction: column;
     padding-right: ${props => props.$isprofile ? '30px': '0'};;
     gap: 20px;
+
+    @media (max-width: 500px) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
+    }
 
 `
 
@@ -402,6 +475,16 @@ const ChannelsContainer = styled.div`
     margin-left: 20px;
     /* margin-right: 10px; */
     padding-bottom: 20px;
+
+    @media (max-width: 500px) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        padding-bottom: 0;
+    }
 
 `
 
