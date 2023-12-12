@@ -309,7 +309,7 @@ const EditForm = styled.form`
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  min-width: 500px;
+  width: 95%;
 `;
 
 const FormInput = styled.input`
