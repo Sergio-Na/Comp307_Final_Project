@@ -310,6 +310,17 @@ const EditForm = styled.form`
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   width: 95%;
+  margin: auto;
+
+  @media (max-width: 768px) { // Adjust the breakpoint as needed
+    width: 90%; // Adjust width for smaller screens
+    padding: 15px;
+  }
+
+  @media (max-width: 500px) { // For very small screens like mobiles
+    width: 100%; // Use the full width of the screen
+    padding: 10px;
+  }
 `;
 
 const FormInput = styled.input`
