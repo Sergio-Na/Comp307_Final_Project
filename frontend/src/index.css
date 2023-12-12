@@ -1,13 +1,13 @@
-*{
+* {
   margin: 0;
-  padding:0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
 }
 
-:root{
-  --main-bg-color: #84468D;
-  --main-accent-color: #DAC4DD;
+:root {
+  --main-bg-color: #84468d;
+  --main-accent-color: #dac4dd;
 }
 
 body {
@@ -15,17 +15,17 @@ body {
   background-color: var(--main-bg-color);
 }
 
-a{
+a {
   text-decoration: none;
   color: black;
 }
 
-button{
-  background:none;
+button {
+  background: none;
   border: none;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }

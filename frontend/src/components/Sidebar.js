@@ -1,239 +1,232 @@
-import React from 'react'
-import styled, { keyframes } from 'styled-components'
-import { NavLink, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axiosInstance from '../axiosConfig';
-import decodeToken from '../decodeToken';
-import Modal from './Modal';
-import AlertMessage from './AlertMessage';
+import React from "react";
+import styled, { keyframes } from "styled-components";
+import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axiosInstance from "../axiosConfig";
+import decodeToken from "../decodeToken";
+import Modal from "./Modal";
+import AlertMessage from "./AlertMessage";
 import { GiAbstract047 } from "react-icons/gi";
 import { CgProfile } from "react-icons/cg";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
+const Sidebar = ({ isVisible }) => {
+  const navigate = useNavigate();
 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-const Sidebar = ({isVisible}) => {
+  const location = useLocation();
+  const pathName = location.pathname;
 
-    const navigate = useNavigate()
+  const token = window.localStorage.getItem("token");
+  const userId = decodeToken(token)?.userId;
 
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+  const [channels, setChannels] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const location = useLocation();
-    const pathName = location.pathname;
-    
-    const token = window.localStorage.getItem('token')
-    const userId = decodeToken(token)?.userId
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
-    const [channels, setChannels] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-    useEffect(() => {
-        if(userId){
-            axiosInstance.get(`/user-channels/${userId}`, config)
-            .then(response => {
-                if (Array.isArray(response.data.channels)) {
-                    setChannels(response.data.channels);
-                
-                } else {
-                setChannels([]); // or handle the error accordingly
-                }
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1000)
-                
-                
-            })
-            .catch(error => {
-                console.error('Error fetching user profile', error);
-                setLoading(false);
-            });
-        }
-          
-
-    }, [userId])
-
-
-    const isProfile = location.pathname === '/profile'
-
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [newChannelInfo, setNewChannelInfo] = useState({
-        name: '',
-        picture: '',
-    })
-    const [hasImageError, setHasImageError] = useState(false);
-
-    const handleChannelFormChange = (e) => {
-        e.preventDefault()
-        const { name, value } = e.target;
-        setNewChannelInfo(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
-
-        
+  useEffect(() => {
+    if (userId) {
+      axiosInstance
+        .get(`/user-channels/${userId}`, config)
+        .then((response) => {
+          if (Array.isArray(response.data.channels)) {
+            setChannels(response.data.channels);
+          } else {
+            setChannels([]); // or handle the error accordingly
+          }
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        })
+        .catch((error) => {
+          console.error("Error fetching user profile", error);
+          setLoading(false);
+        });
     }
+  }, [userId]);
 
-    const handleImageError = (e) => {
-        e.target.onerror = null; // Prevents infinite callback loop
-        e.target.style.display = 'none'; // Hides the broken image
+  const isProfile = location.pathname === "/profile";
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [newChannelInfo, setNewChannelInfo] = useState({
+    name: "",
+    picture: "",
+  });
+  const [hasImageError, setHasImageError] = useState(false);
+
+  const handleChannelFormChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    setNewChannelInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevents infinite callback loop
+    e.target.style.display = "none"; // Hides the broken image
+  };
+
+  const renderLoadingIcons = () => {
+    return Array.from({ length: 4 }, (_, i) => (
+      <ChannelIcon
+        key={i}
+        className="loading-icon"
+        style={{ animationDelay: `${i * 0.25}s` }}
+      >
+        {i + 1}
+      </ChannelIcon>
+    ));
+  };
+
+  const handleChannelCreation = async (e) => {
+    e.preventDefault();
+
+    const body = {
+      name: newChannelInfo.name, // Replace with the actual channel name you want to send
+      picture: newChannelInfo.picture,
     };
 
-
-    const renderLoadingIcons = () => {
-        return Array.from({ length: 4 }, (_, i) => (
-            <ChannelIcon 
-                key={i} 
-                className="loading-icon" 
-                style={{ animationDelay: `${i * 0.25}s` }}
-            >
-                {i + 1}
-            </ChannelIcon>
-        ));
-    };
-
-    const handleChannelCreation = async (e) => {
-        e.preventDefault();
-
-        const body = {
-            name: newChannelInfo.name, // Replace with the actual channel name you want to send
-            picture: newChannelInfo.picture
-        };
-
-
-        try {
-            const response = await axiosInstance.post('/channels', body, config);
-            setSuccessMessage('Channel created successfully!');
-            setErrorMessage('');
-            setChannels([
-                ...channels,
-                {
-                    name: newChannelInfo.name,
-                    picture: newChannelInfo.picture,
-                    id: response.data.channelId
-
-                }
-            ])
-            setModalOpen(false)
-             // Clear any previous error messages
-            // window.location.reload()
-
-        } catch (error) {
-            console.error('Error creating channel:', error.response ? error.response.data : error.message);
-            setErrorMessage('Error creating channel: ' + (error.response ? error.response.data : error.message));
-            setSuccessMessage(''); // Clear any previous success messages
-        }
+    try {
+      const response = await axiosInstance.post("/channels", body, config);
+      setSuccessMessage("Channel created successfully!");
+      setErrorMessage("");
+      setChannels([
+        ...channels,
+        {
+          name: newChannelInfo.name,
+          picture: newChannelInfo.picture,
+          id: response.data.channelId,
+        },
+      ]);
+      setModalOpen(false);
+      // Clear any previous error messages
+      // window.location.reload()
+    } catch (error) {
+      console.error(
+        "Error creating channel:",
+        error.response ? error.response.data : error.message
+      );
+      setErrorMessage(
+        "Error creating channel: " +
+          (error.response ? error.response.data : error.message)
+      );
+      setSuccessMessage(""); // Clear any previous success messages
     }
+  };
 
-    const handleNavLinkClick = (e, channelPath) => {
-        if (location.pathname === channelPath) {
-            e.preventDefault();
-        }
-    };
-
-    const handleSignOut = () => {
-        window.localStorage.removeItem('token')
-        navigate('/signin')
+  const handleNavLinkClick = (e, channelPath) => {
+    if (location.pathname === channelPath) {
+      e.preventDefault();
     }
+  };
 
-    const loggedIn = window.localStorage.getItem('token')
+  const handleSignOut = () => {
+    window.localStorage.removeItem("token");
+    navigate("/signin");
+  };
 
-    if (!isVisible && window.innerWidth <= 500){
-        return null
-    }
+  const loggedIn = window.localStorage.getItem("token");
+
+  if (!isVisible && window.innerWidth <= 500) {
+    return null;
+  }
   return (
     <Container $iscollapsed={isCollapsed} isVisible={isVisible}>
-        <AlertMessage message={successMessage} type="success" clearMessage={setSuccessMessage} />
-        <AlertMessage message={errorMessage} type="error" clearMessage={setErrorMessage} />
+      <AlertMessage
+        message={successMessage}
+        type="success"
+        clearMessage={setSuccessMessage}
+      />
+      <AlertMessage
+        message={errorMessage}
+        type="error"
+        clearMessage={setErrorMessage}
+      />
 
-        {!loggedIn ? 
-                <NavSection className="right">
-                    <StyledNavLink to="/signup">
-                        <Button className="nav">
-                            Sign Up
-                        </Button>
-                    </StyledNavLink>
-                    <StyledNavLink to="/signin">
-                        <Button className="nav">
-                            Sign In
-                        </Button>
-                    </StyledNavLink>
-                </NavSection>
-                :
+      {!loggedIn ? (
+        <NavSection className="right">
+          <StyledNavLink to="/signup">
+            <Button className="nav">Sign Up</Button>
+          </StyledNavLink>
+          <StyledNavLink to="/signin">
+            <Button className="nav">Sign In</Button>
+          </StyledNavLink>
+        </NavSection>
+      ) : (
+        <NavSection className="right">
+          <Button onClick={() => handleSignOut()} className="nav">
+            Sign out
+          </Button>
+          <StyledNavLink to="/dashboard">
+            <Button className="nav">Dashboard</Button>
+          </StyledNavLink>
+          <StyledNavLink to="/about">
+            <Button className="nav">About</Button>
+          </StyledNavLink>
+        </NavSection>
+      )}
 
-                <NavSection className="right">
-                    <Button onClick={() => handleSignOut()} className="nav">
-                        Sign out
-                    </Button>
-                    <StyledNavLink to="/dashboard">
-                        <Button className="nav">
-                            Dashboard
-                        </Button>
-                    </StyledNavLink>
-                    <StyledNavLink to="/about">
-                        <Button className="nav">
-                            About
-                        </Button>
-                    </StyledNavLink>
-                    
-                </NavSection>
-
-        }
-
-        <ChannelsContainer>
+      <ChannelsContainer>
         {loading ? (
-                    <Channels>
-                        {renderLoadingIcons()}
-                    </Channels>
-                ) : (
-                    <Channels $isprofile={isProfile}>
-                        {channels.map((channel) => (
-                        <NavLink 
-                            key={channel.id} 
-                            to={`/dashboard/channels/${channel.id}`}
-                            onClick={(e) => handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)}
-                        >
-                            <ChannelIcon 
-                            $isactive={location.pathname === `/dashboard/channels/${channel.id}`}
-                            data-channel-name={channel.name} // Pass channel name here
-                            >
-                            {
-                                channel.picture ?
-                                <ChannelImage 
-                                src={channel.picture} 
-                                onError={handleImageError}
-                                />
-                                :
-                                <GiAbstract047 size={32} color="#84468D" />
-                            }
-                            </ChannelIcon>
-                        </NavLink>
-                        ))}
-
-                    </Channels>
-
-                )}
-            
-            <BottomSidebar>
-                <ChannelIcon onClick={() => setModalOpen(true)} data-channel-name="New Channel">
-                    +
+          <Channels>{renderLoadingIcons()}</Channels>
+        ) : (
+          <Channels $isprofile={isProfile}>
+            {channels.map((channel) => (
+              <NavLink
+                key={channel.id}
+                to={`/dashboard/channels/${channel.id}`}
+                onClick={(e) =>
+                  handleNavLinkClick(e, `/dashboard/channels/${channel.id}`)
+                }
+              >
+                <ChannelIcon
+                  $isactive={
+                    location.pathname === `/dashboard/channels/${channel.id}`
+                  }
+                  data-channel-name={channel.name} // Pass channel name here
+                >
+                  {channel.picture ? (
+                    <ChannelImage
+                      src={channel.picture}
+                      onError={handleImageError}
+                    />
+                  ) : (
+                    <GiAbstract047 size={32} color="#84468D" />
+                  )}
                 </ChannelIcon>
-                <NavLink to='/profile'>
-                    <ChannelIcon $isactive={location.pathname === `/profile`} data-channel-name="Profile"> 
-                        <CgProfile size={24} color="#84468D" />
+              </NavLink>
+            ))}
+          </Channels>
+        )}
 
-                    </ChannelIcon>
-                </NavLink>
-            </BottomSidebar>
-        </ChannelsContainer>
-        {/* {!location.pathname.includes('/profile')
+        <BottomSidebar>
+          <ChannelIcon
+            onClick={() => setModalOpen(true)}
+            data-channel-name="New Channel"
+          >
+            +
+          </ChannelIcon>
+          <NavLink to="/profile">
+            <ChannelIcon
+              $isactive={location.pathname === `/profile`}
+              data-channel-name="Profile"
+            >
+              <CgProfile size={24} color="#84468D" />
+            </ChannelIcon>
+          </NavLink>
+        </BottomSidebar>
+      </ChannelsContainer>
+      {/* {!location.pathname.includes('/profile')
             &&
             <SubChannels>
                 <SubChannelItem><div>#</div><div>General</div></SubChannelItem>
@@ -244,30 +237,32 @@ const Sidebar = ({isVisible}) => {
             </SubChannels>
 
         } */}
-                <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
-                    <ModalContent>
-                        <h1>Channel Creation</h1>
-                        <h5>Create Forms Here</h5>
-                        <ChannelCreationForm onSubmit={(e) => handleChannelCreation(e)} onChange={(e) => {handleChannelFormChange(e)}}>
-                            <Label htmlFor='name'>
-                                Channel Name:
-                                <Input id="name" name="name" />
-                            </Label>
-                            <Label htmlFor='picture'>
-                                Picture:
-                                <Input type="url" id="picture" name="picture" />
-                            </Label>
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
+        <ModalContent>
+          <h1>Channel Creation</h1>
+          <h5>Create Forms Here</h5>
+          <ChannelCreationForm
+            onSubmit={(e) => handleChannelCreation(e)}
+            onChange={(e) => {
+              handleChannelFormChange(e);
+            }}
+          >
+            <Label htmlFor="name">
+              Channel Name:
+              <Input id="name" name="name" />
+            </Label>
+            <Label htmlFor="picture">
+              Picture:
+              <Input type="url" id="picture" name="picture" />
+            </Label>
 
-                            <Button type='submit'>
-                                Create
-                            </Button>
-                        </ChannelCreationForm>
-                    </ModalContent>
-                </Modal>
-        
+            <Button type="submit">Create</Button>
+          </ChannelCreationForm>
+        </ModalContent>
+      </Modal>
     </Container>
-  )
-}
+  );
+};
 
 const StyledNavLink = styled(NavLink)`
   text-decoration: none;
@@ -286,26 +281,24 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-
-
 const NavSection = styled.div`
-    /* display: none; */
+  /* display: none; */
 
-    @media (min-width: 500px) {
-        display: none;
-    }
+  @media (min-width: 500px) {
+    display: none;
+  }
 
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
-`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
 
 const ChannelImage = styled.img`
-  width: 100%;  // Fill the entire width of the container
+  width: 100%; // Fill the entire width of the container
   height: 100%; // Fill the entire height of the container
   object-fit: cover; // Cover the entire area, cropping if necessary
   border-radius: 10px; // Match the border-radius of the container
@@ -319,7 +312,7 @@ const colorPulsate = keyframes`
 const ChannelIcon = styled.button`
   width: 60px;
   height: 60px;
-  border-radius: ${props => props.$isactive ? '10px' : '50%'};
+  border-radius: ${(props) => (props.$isactive ? "10px" : "50%")};
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -328,7 +321,7 @@ const ChannelIcon = styled.button`
   transition: border-radius 0.5s ease;
 
   &::before {
-    content: '${props => props.$isactive ? '•' : ''}';
+    content: "${(props) => (props.$isactive ? "•" : "")}";
     display: flex;
     align-items: center;
     justify-content: center;
@@ -340,7 +333,7 @@ const ChannelIcon = styled.button`
     // Additional styles for positioning, size, color, etc.
 
     @media (max-width: 500px) {
-        display: none;
+      display: none;
     }
   }
 
@@ -367,7 +360,7 @@ const ChannelIcon = styled.button`
     opacity: 1;
 
     @media (max-width: 500px) {
-        display: none;
+      display: none;
     }
   }
 
@@ -377,150 +370,136 @@ const ChannelIcon = styled.button`
   }
 
   &.loading-icon {
-        animation: ${colorPulsate} 0.5s ease-in-out infinite;
-        background-color: var(--main-accent-color);
-        color: var(--main-accent-color);
-    }
+    animation: ${colorPulsate} 0.5s ease-in-out infinite;
+    background-color: var(--main-accent-color);
+    color: var(--main-accent-color);
+  }
 `;
 
-
-
 const activeStyle = {
-    backgroundColor: '#FFFFFF', // Inverted color for active state
-    color: 'var(--main-accent-color)' // Adjust as needed
+  backgroundColor: "#FFFFFF", // Inverted color for active state
+  color: "var(--main-accent-color)", // Adjust as needed
 };
 
 const Button = styled.button`
-    background-color: var(--main-accent-color);
-    padding: 15px;
-    border-radius: 10px;
-    transition: all 1s ease;
-    width: max-content;
+  background-color: var(--main-accent-color);
+  padding: 15px;
+  border-radius: 10px;
+  transition: all 1s ease;
+  width: max-content;
 
-    &:hover{
-        background-color: var(--main-bg-color);
-        cursor: pointer;
-        transform: scale(1.05)
-    }
+  &:hover {
+    background-color: var(--main-bg-color);
+    cursor: pointer;
+    transform: scale(1.05);
+  }
 
-    &.nav{
-        width: 200px;
-    }
-
-`
-
-const ChannelCreationForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-`
-
-const ModalContent = styled.div`
-    width: 40vw;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    color: black;
-
-`
-
-const Label = styled.label`
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-
-`
-
-const Input = styled.input`
-    border: 1px solid grey;
-    outline: none;
-    border-radius: 10px;
-    padding: 5px 10px;
-    width: 100%;
-`
-
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    /* Other styles... */
-
-    @media (max-width: 500px) {
-        display: ${props => props.isVisible ? 'flex' : 'none'};
-        width: 100vw; // Full viewport width
-        height: 100vh; // Full viewport height
-        position: fixed; // Make it fixed position
-        top: 20;
-        left: 0;
-        z-index: 100; // Ensure it's on top of other elements
-        background-color: var(--main-bg-color);
-        align-items: center;
-        padding-top: 30px;
-    }
-
-    @media (min-width: 501px) {
-        display: flex; // Always show sidebar on larger screens
-    }
+  &.nav {
+    width: 200px;
+  }
 `;
 
+const ChannelCreationForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const ModalContent = styled.div`
+  width: 40vw;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: black;
+`;
+
+const Label = styled.label`
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+
+const Input = styled.input`
+  border: 1px solid grey;
+  outline: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  width: 100%;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* Other styles... */
+
+  @media (max-width: 500px) {
+    display: ${(props) => (props.isVisible ? "flex" : "none")};
+    width: 100vw; // Full viewport width
+    height: 100vh; // Full viewport height
+    position: fixed; // Make it fixed position
+    top: 20;
+    left: 0;
+    z-index: 100; // Ensure it's on top of other elements
+    background-color: var(--main-bg-color);
+    align-items: center;
+    padding-top: 30px;
+  }
+
+  @media (min-width: 501px) {
+    display: flex; // Always show sidebar on larger screens
+  }
+`;
 
 const BottomSidebar = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 30px;
 
-    @media (max-width: 500px) {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 20px;
-        width: 100%;
-        justify-content: center;
-    }
-
-`
+  @media (max-width: 500px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+  }
+`;
 
 const Channels = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-content: space-around;
-    padding-right: ${props => props.$isprofile ? '30px': '0'};;
+  display: flex;
+  flex-direction: column;
+  align-content: space-around;
+  padding-right: ${(props) => (props.$isprofile ? "30px" : "0")};
+  gap: 20px;
+
+  @media (max-width: 500px) {
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 20px;
-
-    @media (max-width: 500px) {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 20px;
-        width: 100%;
-        justify-content: center;
-    }
-
-`
+    width: 100%;
+    justify-content: center;
+  }
+`;
 
 const ChannelsContainer = styled.div`
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 20px;
+  /* margin-right: 10px; */
+  padding-bottom: 20px;
+
+  @media (max-width: 500px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
     justify-content: space-between;
-    margin-left: 20px;
-    /* margin-right: 10px; */
-    padding-bottom: 20px;
+    margin-left: 0;
+    padding-bottom: 0;
+  }
+`;
 
-    @media (max-width: 500px) {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 20px;
-        width: 100%;
-        justify-content: space-between;
-        margin-left: 0;
-        padding-bottom: 0;
-    }
-
-`
-
-
-
-
-
-
-export default Sidebar
+export default Sidebar;
