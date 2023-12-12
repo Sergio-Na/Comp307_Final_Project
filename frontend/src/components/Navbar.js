@@ -41,9 +41,24 @@ const Navbar = ({ toggleSidebar }) => {
       </NavSection>
 
       {!loggedIn ? (
-        <BurgerMenu>
-          <CiMenuBurger size={26} onClick={toggleSidebar} />
-        </BurgerMenu>
+        <>
+            <NavSection className="right">
+                <NavLink to="/signin">
+                    <Button>
+                        Sign In
+                    </Button>
+                </NavLink>
+                <NavLink to="/signup">
+                    <Button>
+                        Sign Up
+                    </Button>
+                </NavLink>
+            </NavSection>
+            <BurgerMenu>
+                <CiMenuBurger size={26} onClick={toggleSidebar} />
+            </BurgerMenu>
+        </>
+        
       ) : (
         <>
           <NavSection className="right">
