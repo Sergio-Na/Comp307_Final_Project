@@ -42,23 +42,33 @@ const Dashboard = () => {
           console.error('Error fetching user channels', error);
           setIsLoading(false);
       });
+  }, []);
 
-  }, [channels]);
+  const getLatestMessages = (channel) => {
+    const latestMessages = channel.messages.slice(-2); // Get the last three messages
 
-  const getLatestMessages = (messages) => {
-    const latestMessages = messages.slice(-3); // Get the last three messages
-
-    console.log(latestMessages);
-
-    return latestMessages.map((message) => {
-            <Message 
-              text={message.text}
-              userId={message.user}
-              timestamp={new Date(message.timestamp).toDateString()}
-              isHighlighted={false}
-            />
-    });      
-    
+    if (latestMessages.length > 0) {
+        return latestMessages.map( msg => {
+          const { text, user, _id, timestamp } = msg;
+          return (
+              <div message-id={_id}>
+                  <NavLink 
+                              key={channel.id} 
+                              to={`/dashboard/channels/${channel.id}`}
+                  >
+                      <Message 
+                        key={_id}
+                        text={text} 
+                        userId={user}
+                        timestamp={new Date(timestamp).toUTCString()}
+                        isHighlighted={false}
+                      />          
+                  </NavLink>
+                  
+              </div>
+          )
+      })      
+    }
   };
 
   const navigateToChannel = (channelId) => {
@@ -105,7 +115,25 @@ const Dashboard = () => {
                 ))}
              </ChannelGrid>
 
-        <h1>Latest Activity</h1>
+          <h1>Latest Activity</h1>
+          {
+            channels.slice(0, 3).map((channel) => (
+                channel.messages.length > 0 &&
+                  <RecentMessages>
+                    <h4>#{channel.name}</h4>
+                    <NavLink 
+                              key={channel.id} 
+                              to={`/dashboard/channels/${channel.id}`}
+                        >
+                            <NavigateButton>
+                              Go to Channel
+                            </NavigateButton>
+                      </NavLink>
+                    {getLatestMessages(channel)} 
+                  </RecentMessages>
+                
+            )) 
+          }
         </>
         
       )}
@@ -197,4 +225,30 @@ const Loader = styled.div`
     justify-content: center; 
     align-items: center;   
 
+`;
+
+const RecentMessages = styled.div`
+  border: 2px solid #84468D;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  padding: 25px;
+
+  > div {
+    margin: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #EED2EB;
+
+    &:hover {
+        transform: scale(1.03);
+        transition: all 0.5s;
+        cursor: pointer;
+        background-color: #EED2EB;
+    }
+  }
+
+  > h4 {
+    display: inline;
+    margin-right: 40px;
+  }
 `;
