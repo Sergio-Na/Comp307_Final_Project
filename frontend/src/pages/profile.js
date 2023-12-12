@@ -309,7 +309,18 @@ const EditForm = styled.form`
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  min-width: 500px;
+  width: 95%;
+  margin: auto;
+
+  @media (max-width: 768px) { // Adjust the breakpoint as needed
+    width: 90%; // Adjust width for smaller screens
+    padding: 15px;
+  }
+
+  @media (max-width: 500px) { // For very small screens like mobiles
+    width: 100%; // Use the full width of the screen
+    padding: 10px;
+  }
 `;
 
 const FormInput = styled.input`
@@ -438,6 +449,12 @@ const ProfileContainer = styled.div`
   background-color: #f8f8f8;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 500px) {
+    margin: 0;
+    margin-top: 20px;
+    padding: 20px;
+  }
 `;
 
 const Img = styled.img`

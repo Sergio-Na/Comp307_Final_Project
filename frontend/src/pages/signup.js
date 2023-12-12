@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import axiosInstance from '../axiosConfig';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react'
 
 const SignUp = () => {
     
     const navigate = useNavigate()
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -24,6 +25,12 @@ const SignUp = () => {
         setFormData({...formData, [e.target.name]: e.target.value});
         setError('')
     }
+
+    useEffect(() => {
+        if (location.state?.email) {
+            setFormData(prevFormData => ({ ...prevFormData, email: location.state.email }));
+        }
+    }, [location.state]);
 
     // Handle form submission
     const handleSignUp = async (e) => {
@@ -56,7 +63,7 @@ const SignUp = () => {
             </Names>
             <Label htmlFor="email">
                 Email:
-                <Input type="email" name="email" id="email"  onChange={handleChange} autoComplete="true" />
+                <Input type="email" name="email" id="email"  onChange={handleChange} autoComplete="true" value={formData.email}/>
             </Label>
             <Label htmlFor="password">
                 Password: 

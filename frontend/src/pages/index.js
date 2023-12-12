@@ -1,7 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
+
+
 
 const Home = () => {
+  const [email, setEmail] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      navigate('/signup', { state: { email: email } });
+  };
   // Landing Page
   return (
     <Container>
@@ -13,12 +23,17 @@ const Home = () => {
             Collaborate and Communicate{" "}
           </SubHeading>
           <CTA>
-            <Form>
-              <Label htmlFor="email">
-                <Input type="email" placeholder="Email address" />
-                <Button>GET STARTED</Button>
-              </Label>
-            </Form>
+            <Form onSubmit={handleSubmit}>
+            <Label htmlFor="email">
+              <Input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button type="submit">GET STARTED</Button>
+            </Label>
+          </Form>
           </CTA>
         </TextSection>
       </Hero>
@@ -41,7 +56,12 @@ const TextSection = styled.div`
   flex-direction: column;
   gap: 20px;
   max-width: 600px;
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 0 20px;
+  }
 `;
+
 
 const Container = styled.div`
   display: flex;
@@ -49,30 +69,44 @@ const Container = styled.div`
   justify-content: center;
   gap: 50px;
   width: 100%;
-  justify-content: center;
-  align-items: stretch; // Align items in a way that they stretch to fill the container
   padding: 10vh 0px;
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    gap: 30px;
+  }
 `;
 
+
 const Hero = styled.section`
-  flex: 1; // Make sure it takes up equal space
+  flex: 1;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   flex-direction: column;
   gap: 20px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const ImageSection = styled.section`
-  flex: 1; // Make sure it takes up equal space
-  display: flex; // Add display flex
-  align-items: center; // Center the content vertically
+  flex: 1;
+  display: flex;
+  align-items: center;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
+
 
 const Heading = styled.h1`
   font-size: 55px;
   line-height: 45px;
   padding-bottom: 5px;
+  @media (max-width: 768px) {
+    font-size: 40px;
+    line-height: 35px;
+  }
 `;
 
 const SubHeading = styled.h3`
@@ -80,7 +114,11 @@ const SubHeading = styled.h3`
   letter-spacing: 1.5px;
   line-height: 20px;
   padding-bottom: 10px;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
+
 const CTA = styled.div`
   width: 100%;
 `;
@@ -99,6 +137,9 @@ const Input = styled.input`
   border-radius: 5px;
   border: 1px solid black;
   font-size: 16px;
+  @media (max-width: 768px) {
+    flex: 1;
+  }
 `;
 
 const Button = styled.button`
@@ -108,6 +149,10 @@ const Button = styled.button`
   border-radius: 5px;
   font-size: 16px;
   font-weight: bold;
+  @media (max-width: 768px) {
+    flex-basis: 100%;
+  }
 `;
+
 
 export default Home;
