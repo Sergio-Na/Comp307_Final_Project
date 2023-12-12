@@ -9,12 +9,15 @@ require("dotenv").config({ path: "./.env" });
 const app = express();
 const port = process.env.PORT || 5000;
 const server = http.Server(app);
-app.use(cors());
+app.use(cors({
+  origin: 'https://comp307-final-project.vercel.app', // Frontend URL
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 
 const socketIO = require('socket.io')(server, {
   cors: {
-      origin: "https://comp307-final-project.vercel.app/"
+      origin: "https://comp307-final-project.vercel.app"
   }
 });
 
