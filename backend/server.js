@@ -14,7 +14,7 @@ app.use(express.json());
 
 const socketIO = require('socket.io')(server, {
   cors: {
-      origin: "http://localhost:3000"
+      origin: "https://comp307-final-project.vercel.app/"
   }
 });
 
