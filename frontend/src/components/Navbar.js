@@ -54,26 +54,42 @@ const Navbar = ({toggleSidebar}) => {
             </NavSection>
             
             {!loggedIn ? 
-                <BurgerMenu>
-                    <CiMenuBurger size={26} onClick={toggleSidebar}/>
-                </BurgerMenu>
-                
-                :
-                <>
-                <NavSection className="right">
-                    <Button onClick={() => handleSignOut()}>
-                        Sign out
-                    </Button>
-                    <NavLink to="/dashboard">
-                            <Button>
-                                Dashboard
-                            </Button>
-                    </NavLink>
+            <>
+            <NavSection className="right">
+                <NavLink to="/signup">
+                        <Button>
+                            Sign Up
+                        </Button>
+                </NavLink>
+                <NavLink to="/signin">
+                        <Button>
+                            Sign In
+                        </Button>
+                </NavLink>
                     
                 </NavSection>
                 <BurgerMenu>
                     <CiMenuBurger size={26} onClick={toggleSidebar}/>
                 </BurgerMenu>
+                </>
+                
+                
+                :
+                <>
+                    <NavSection className="right">
+                        <Button onClick={() => handleSignOut()}>
+                            Sign out
+                        </Button>
+                        <NavLink to="/dashboard">
+                                <Button>
+                                    Dashboard
+                                </Button>
+                        </NavLink>
+                        
+                    </NavSection>
+                    <BurgerMenu>
+                        <CiMenuBurger size={26} onClick={toggleSidebar}/>
+                    </BurgerMenu>
                 </>
 
         }
@@ -143,6 +159,7 @@ const NavSection = styled.div`
     }
 
     @media (max-width: 500px) {
+        display: flex;
         &.right {
             display: none;
         }
