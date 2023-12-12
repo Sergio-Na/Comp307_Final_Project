@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Create an Axios instance with a base URL
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000/api'
+  baseURL: "https://mcchats-backend.onrender.com/api",
 });
 
 export default axiosInstance;
