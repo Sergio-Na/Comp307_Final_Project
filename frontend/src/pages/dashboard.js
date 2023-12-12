@@ -85,7 +85,9 @@ const Dashboard = () => {
         </Loader>
       ) : (
         <>
-            <ChannelGrid>
+          {channels.length > 0 ? (
+            <>
+              <ChannelGrid>
                 {channels.map((channel) => (
                   <ChannelItem key={channel._id}>
                         {channel.picture ? (
@@ -134,6 +136,18 @@ const Dashboard = () => {
                 
             )) 
           }
+            </>
+          ) : (
+            <>
+              <EmptyStateContainer>
+            <EmptyStateMessage>Welcome to McChats!</EmptyStateMessage>
+            <EmptyStateSubtext>
+              It looks like you're not in any channels yet. Start by joining or creating a new channel to connect with others.
+            </EmptyStateSubtext>
+          </EmptyStateContainer>
+            </>
+          )}
+            
         </>
         
       )}
@@ -142,6 +156,36 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+const EmptyStateContainer = styled.div`
+  text-align: center;
+  margin-top: 50px;
+`;
+
+const EmptyStateMessage = styled.h2`
+  color: #84468D;
+  margin-bottom: 20px;
+`;
+
+const EmptyStateSubtext = styled.p`
+  color: #666;
+  margin-bottom: 30px;
+`;
+
+const CreateChannelButton = styled(NavLink)`
+  background-color: #84468D;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #9b6ab0;
+    transition: background-color 0.3s ease;
+  }
+`;
+
 
 const DashboardContainer = styled.div`
   padding: 50px;
