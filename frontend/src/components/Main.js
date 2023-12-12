@@ -12,34 +12,29 @@ import Channel from "../pages/channel.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 import Profile from "../pages/profile.js";
 import { useEffect } from "react";
-import isTokenExpired from "../isTokenExpired.js";
-import decodeToken from "../decodeToken.js";
-import { useState } from "react";
 
-const Main = ( {socket, isSidebarVisible, setIsSidebarVisible} ) => {
+const Main = ({ socket, isSidebarVisible, setIsSidebarVisible }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isDashboard =
     location.pathname.includes("/dashboard") ||
     location.pathname === "/profile" ||
-    window.innerWidth <= 500
+    window.innerWidth <= 500;
 
+  useEffect(() => {
+    // Hide sidebar when the route changes
+    setIsSidebarVisible(false);
+  }, [location]); // Dependency array with location
 
-    useEffect(() => {
-      // Hide sidebar when the route changes
-      setIsSidebarVisible(false);
-    }, [location]); // Dependency array with location
-
-    useEffect(() => {
-      if(window.innerWidth >= 500){
-        setIsSidebarVisible(true)
-      }
-    }, [window])
-
+  useEffect(() => {
+    if (window.innerWidth >= 500) {
+      setIsSidebarVisible(true);
+    }
+  }, [window]);
 
   return (
     <MainContent>
-      {isDashboard && <Sidebar isVisible={isSidebarVisible}/>}
+      {isDashboard && <Sidebar isVisible={isSidebarVisible} />}
       <Content $isDashboard={isDashboard}>
         <Routes>
           <Route exact path="/" element={<Home />} />
@@ -109,11 +104,10 @@ const Content = styled.div`
   background-color: #eeeeee;
 
   @media (max-width: 800px) {
-        padding: 10px 10px;
-        
-    }
+    padding: 10px 10px;
+  }
 
-  @media (max-width: 500px){
+  @media (max-width: 500px) {
     border-radius: 10px;
     margin: 5px;
   }
